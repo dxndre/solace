@@ -157,9 +157,13 @@ body {
 	}
 
 	section {
+		position: relative;
+
 		h2 {
+			font-weight: bold;
 			margin-bottom: 2em;
 			position: relative;
+			z-index: 1;
 		}
 
 		&.homepage-banner {
@@ -246,8 +250,9 @@ body {
 				.film-title {
 					position: relative;
 					top: -3.5em;
-					padding: 20px;
+					padding: 24px;
 					margin-bottom: -3.5em;
+					z-index: 2;
 
 					a {
 						font-size: 24px;
@@ -273,6 +278,7 @@ body {
 						background-image: linear-gradient(180deg, #00000000, #000000);
 						opacity: 1;
 						pointer-events: none;
+						z-index: 1;
 					}
 				}
 			}
@@ -293,12 +299,12 @@ body {
 					&::after {
 						content: counter(film-counter);
 						position: absolute;
-						bottom: 10px;
+						bottom: 0px;
 						right: 10px;
 						color: transparent;
-						-webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+						-webkit-text-stroke: 1px white;
 						font-weight: bold;
-						font-size: 6em;
+						font-size: 7.5em;
 						line-height: 1;
 					}
 				}
@@ -313,6 +319,8 @@ body {
 				.text-area {
 					max-width: 750px;
 					margin-bottom: 3em;
+					z-index: 1;
+					position: relative;
 				}	
 			}
 
@@ -354,12 +362,76 @@ body {
 
 				.name {
 					text-transform: uppercase;
-					// position: relative;
-					// top: -3.5em;
-					// padding: 20px;
-					// margin-bottom: -3.5em;
+					margin: 0;
+					position: relative;
+					top: -4em;
+					left: 2em;
 				}
-				
+			}
+		}
+
+		&.contact-section {
+			z-index: 1;
+			padding: 5em 0;
+
+			form {
+				.inner-form {
+					display: flex;
+					gap: 16px;
+
+					input,
+					select {
+						padding: 16px;
+						padding-left: 0;
+						background-color: transparent;
+						color: white;
+						border: none;
+						border-bottom: 1px solid white;
+						margin-bottom: 1em;
+
+						&::placeholder {
+							color: white;
+							font-weight: lighter;
+						}
+					}
+
+					select {
+						width: 100%;
+						font-weight: lighter;
+					}
+
+					textarea {
+						background-color: transparent;
+						padding: 16px;
+						border: 1px solid white;
+
+						&::placeholder {
+							color: white;
+							font-weight: lighter;
+						}
+					}
+				}
+
+				.legal-footnote {
+					font-size: 14px;
+					font-weight: lighter;
+					margin-bottom: 2em;
+				}
+
+				.wpcf7-submit {
+					width: 200px;
+					padding: 16px;
+					margin-top: 2em;
+					border: 1px solid transparent;
+					transition: 0.3s all ease;
+
+					&:hover {
+						color: white;
+						background: transparent;
+						border: 1px solid white;
+						transition: 0.15s all ease;
+					}
+				}
 			}
 		}
 	}
@@ -371,6 +443,7 @@ body {
 		position: absolute;
 		bottom: 20vh;
 		color: white;
+		z-index: 2;
 
 		.play-icon {
 			font-size: 2.5em;
@@ -486,12 +559,57 @@ img {
 
 #main {
 	// margin-top: $spacer;
+
+	img {
+		-webkit-user-drag: none; /* Safari/Chrome */
+		-khtml-user-drag: none;  /* Old Konqueror */
+		-moz-user-drag: none;    /* Firefox (not always needed) */
+		-o-user-drag: none;      /* Old Opera */
+		user-drag: none;
+		user-select: none;       /* Prevent selecting image text/alt */
+		pointer-events: none;    /* Optional: also prevents right-click/context menu */
+	}
+
+	&::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 20%;
+		height: 100vh;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(#000000));
+		background-image: linear-gradient(90deg, rgb(0 0 0), #00000000);
+		opacity: 1;
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	&::after {
+		content: "";
+		position: fixed;
+		top: 0;
+		right: 0;
+		width: 20%;
+		height: 100vh;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(#000000));
+		background-image: linear-gradient(270deg, rgb(0 0 0), #00000000);
+		opacity: 1;
+		pointer-events: none;
+		z-index: 1;
+	}
 }
 
 /* Footer */
 
 #footer {
 	background-color: #000;
+	border-bottom: 5px solid white;
+	z-index: 1;
+
+	.inner-footer {
+		border-top: 1px solid white;
+		padding: 1em 0;
+	}
 
 	p {
 		margin-top: 10px;

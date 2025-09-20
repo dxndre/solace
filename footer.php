@@ -14,7 +14,7 @@
 			?>
 		</main><!-- /#main -->
 		<footer id="footer">
-			<div class="container">
+			<div class="container inner-footer">
 				<div class="row">
 					<div class="col-md-6">
 						<p><?php printf( esc_html__( '&copy; %1$s %2$s. All rights reserved.', 'solace-digital' ), wp_date( 'Y' ), get_bloginfo( 'name', 'display' ) ); ?></p>

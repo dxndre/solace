@@ -593,3 +593,25 @@ function now_playing_shortcode( $atts ) {
     return ob_get_clean();
 }
 add_shortcode( 'now_playing', 'now_playing_shortcode' );
+
+
+// Get Job Ttile to show up in the CMS
+
+// Shortcode: [person_job_title]
+function person_job_title_shortcode($atts) {
+    global $post;
+
+    // Only run on the 'person' CPT
+    if ($post && $post->post_type === 'person') {
+        $job_title = get_field('job_title', $post->ID); // Pull the ACF field
+
+        if ($job_title) {
+            return '<div class="person-job-title">' . esc_html($job_title) . '</div>';
+        } else {
+            return '<div class="person-job-title empty">No Job Title set.</div>';
+        }
+    }
+
+    return ''; // Return nothing if not on a 'person' CPT
+}
+add_shortcode('person_job_title', 'person_job_title_shortcode');
