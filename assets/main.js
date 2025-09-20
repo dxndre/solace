@@ -23,3 +23,17 @@ import * as bootstrap from 'bootstrap';
 		});
 	});
 })();
+
+
+
+// Scroll classes for Navbar
+
+document.addEventListener("scroll", function () {
+  const navbar = document.getElementById("header");
+
+  if (window.scrollY > 10) {
+    navbar.classList.add("scrolled");
+  } else {
+    navbar.classList.remove("scrolled");
+  }
+});

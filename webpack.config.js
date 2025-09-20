@@ -14,7 +14,11 @@ module.exports = {
 			client: {
 				overlay: false,
 			},
-			// open: ["http://localhost"], // (Optional) Add your local domain here
+			// 👇 Fix: allow your LocalWP host
+			allowedHosts: "all", 
+			// or explicitly:
+			// allowedHosts: ["solace-digital.local"],
+
 			liveReload: true,
 			hot: false,
 			compress: true,
@@ -24,17 +28,8 @@ module.exports = {
 		},
 		context: path.resolve(__dirname, "assets"),
 		entry: ["./main.js", "./main.scss"],
-		// jQuery support
-		/*externals: {
-			jquery: "jQuery",
-		},*/
 		plugins: [
 			...webpackConfig.plugins,
-			/*new webpack.ProvidePlugin({
-				$: "jquery",
-				jQuery: "jquery",
-				"window.jQuery": "jquery",
-			}),*/
 			new removeEmptyScriptsPlugin({
 				stage: removeEmptyScriptsPlugin.STAGE_AFTER_PROCESS_PLUGINS,
 			}),

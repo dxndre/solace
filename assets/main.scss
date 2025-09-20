@@ -111,16 +111,25 @@ $link-decoration: none;
 // 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
 @import '../node_modules/bootstrap/scss/utilities/api';
 
+// Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 /**
  * General
  */
 
-html {
-	border-top: 3px solid white;
-}
+ html {
+	background-color: black;
+ }
 
 body {
-	font-family: 'Inter', sans-serif;
+	font-family: "JetBrains Mono", monospace;
+	background-color: black;
+	color: white;
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: "Inter", sans-serif;
+	}
 
 	&.page-template-page-full {
 		#main {
@@ -148,20 +157,239 @@ body {
 	}
 
 	section {
+		h2 {
+			margin-bottom: 2em;
+			position: relative;
+		}
+
 		&.homepage-banner {
+			margin-bottom: -20vh;
+
 			h1 {
 				font-size: 60px;
 				color: white;
 			}
 
+			video {
+				filter: saturate(0);
+			}
+
 			.wp-block-buttons {
 				.wp-block-button {
 					a {
+						min-width: 215px;
+						background: black;
+						color: white;
+						font-weight: 600;
 						border-radius: 0;
 						border: none;
-						padding: 8px 16px;
+						border-bottom: 0px solid transparent;
+						padding: 12px 16px;
+						box-shadow: none;
+						transition: 0.3s all ease-in-out;
+
+						i {
+							margin-left: 2em;
+							transition: 0.3s ease-in-out;
+						}
+
+						&:hover {
+							border-bottom: 1px solid black;
+							filter: invert(1);
+							transition: 0.15s all ease-in-out;
+
+							i {
+								transform: scale(1.5);
+								transition: 0.15s all ease-in-out;
+							}
+						}
 					}
 				}
+			}
+
+			.wp-block-cover__background {
+				&::after {
+					content: "";
+					position: absolute;
+					top: 50%;
+					left: 0;
+					width: 100%;
+					height: 50%;
+					background-image: linear-gradient(180deg, #00000000, #000000);
+					opacity: 1;
+					pointer-events: none;
+				}
+			}
+		}
+
+		&.film-section,
+		&.trending-section {
+			padding: 5em 0;
+
+			.film-container {
+				padding: 0 !important;
+
+				.my-carousel {
+					.wp-block-post-template {
+						display: flex !important;      // Allow horizontal scrolling
+						flex-wrap: nowrap !important;  // Prevent wrapping
+						gap: 20px;                     // Optional spacing between slides
+					}
+
+					.swiper-slide {
+						flex: 0 0 auto;                // Make each slide only as wide as its content
+						width: 100%;                    // Or a specific width if you want multiple slides per view
+					}
+				}
+
+
+				.film-title {
+					position: relative;
+					top: -3.5em;
+					padding: 20px;
+					margin-bottom: -3.5em;
+
+					a {
+						font-size: 24px;
+						color: white;
+					}
+				}
+
+				figure {
+					position: relative; // make figure the containing block
+
+					img {
+						height: 300px;
+						display: block; // avoids inline gaps
+					}
+
+					&::before {
+						content: "";
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						background-image: linear-gradient(180deg, #00000000, #000000);
+						opacity: 1;
+						pointer-events: none;
+					}
+				}
+			}
+		}
+
+		&.trending-section {
+			.wp-block-post-template {
+				counter-reset: film-counter;
+			}
+
+			.wp-block-post {
+				counter-increment: film-counter;
+				position: relative;
+
+				figure {
+					position: relative;
+
+					&::after {
+						content: counter(film-counter);
+						position: absolute;
+						bottom: 10px;
+						right: 10px;
+						color: transparent;
+						-webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+						font-weight: bold;
+						font-size: 6em;
+						line-height: 1;
+					}
+				}
+			}
+		}
+
+
+		&.about-text {
+			padding: 5em 0;
+
+			.wp-block-group__inner-container {
+				.text-area {
+					max-width: 750px;
+					margin-bottom: 3em;
+				}	
+			}
+
+			p {
+				font-weight: lighter;
+				line-height: 32px;
+			}
+
+			.crew {
+				a {
+					&::before {
+						content: "";
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						background: radial-gradient(#00000000, #000000);
+						z-index: 1;
+						opacity: 1;
+						pointer-events: none;
+						transition: 0.3s all ease;
+					}
+
+					img {
+						height: 750px;
+						object-fit: cover;
+						filter: saturate(0);
+						transition: 0.3s all ease;
+					}
+
+					&:hover {
+						img {
+							filter: saturate(1);
+							transition: 0.15s all ease;
+						}
+					}
+				}
+
+				.name {
+					text-transform: uppercase;
+					// position: relative;
+					// top: -3.5em;
+					// padding: 20px;
+					// margin-bottom: -3.5em;
+				}
+				
+			}
+		}
+	}
+
+	.now-playing {
+		display: flex;
+		width: 400px;
+		gap: 10px;
+		position: absolute;
+		bottom: 20vh;
+		color: white;
+
+		.play-icon {
+			font-size: 2.5em;
+		}
+
+		.text-side {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			h3 {
+				font-weight: 600;
+				text-transform: uppercase;
+				font-size: 18px;
+				margin-bottom: 2px;
+			}
+			span {
+				font-size: 12px;
+				font-weight: 300;
 			}
 		}
 	}
@@ -196,30 +424,52 @@ img {
 
 #header {
 	&.solace-navbar {
-		background: transparent !important;
+		border-top: 5px solid white;
+		background: transparent;
 		padding: 20px 0;
-		margin-top: 3px;
+		backdrop-filter: blur(0px);
+		transition: 0.3s all ease;
+
 
 		#navbar {
 			flex-direction: row-reverse;
 		}
 
 		#menu-main-menu {
+			counter-reset: menu-counter;
 			gap: 20px;
 
 			li {
+				counter-increment: menu-counter;
+
 				.nav-link {
 					font-weight: 600;
 					color: white;
 					text-transform: uppercase;
+					mix-blend-mode: difference;
+
+					&::after {
+						content: "[" counter(menu-counter) "]";
+						font-size: 0.6em; // smaller to mimic superscript
+						vertical-align: super; // raises it like a superscript
+						margin-left: 4px; // small space from text
+					}
 				}
 			}
+		}
+
+		&.scrolled {
+			background-image: linear-gradient(0deg, rgba(0, 0, 0, 0), #000000);
+			backdrop-filter: blur(1px);
+			transition: 0.3s all ease;
 		}
 	}
 	
 	.search-form {
 		min-width: 250px;
 	}
+
+	
 }
 
 .navbar-brand {
@@ -241,7 +491,7 @@ img {
 /* Footer */
 
 #footer {
-	background-color: #fff;
+	background-color: #000;
 
 	p {
 		margin-top: 10px;

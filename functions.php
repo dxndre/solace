@@ -563,13 +563,33 @@ function solace_digital_scripts_loader() {
 }
 add_action( 'wp_enqueue_scripts', 'solace_digital_scripts_loader' );
 
-function mytheme_enqueue_google_fonts() {
-    wp_enqueue_style(
-        'mytheme-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap',
-        array(),
-        null
-    );
-}
-add_action('wp_enqueue_scripts', 'mytheme_enqueue_google_fonts');
+// Custom Components
 
+// Register [now_playing] shortcode
+function now_playing_shortcode( $atts ) {
+    // Define default attributes (so you can pass custom text if needed)
+    $atts = shortcode_atts(
+        array(
+            'title'   => 'Now Playing',
+            'quote'   => '“I always knew you were special”',
+        ),
+        $atts,
+        'now_playing'
+    );
+
+    ob_start(); ?>
+    
+    <div class="now-playing">
+        <div class="play-icon">
+            <i class="fa-solid fa-circle-play"></i>
+        </div>
+        <div class="text-side">
+            <h3><?php echo esc_html( $atts['title'] ); ?></h3>
+            <span><?php echo esc_html( $atts['quote'] ); ?></span>
+        </div>
+    </div>
+
+    <?php
+    return ob_get_clean();
+}
+add_shortcode( 'now_playing', 'now_playing_shortcode' );
