@@ -598,20 +598,44 @@ add_shortcode( 'now_playing', 'now_playing_shortcode' );
 // Get Job Ttile to show up in the CMS
 
 // Shortcode: [person_job_title]
-function person_job_title_shortcode($atts) {
-    global $post;
+function shortcode_person_job_title($atts) {
+    $atts = shortcode_atts([
+        'id'   => '',   // Person post ID
+        'slug' => '',   // Or Person slug
+    ], $atts, 'person_job_title');
 
-    // Only run on the 'person' CPT
-    if ($post && $post->post_type === 'person') {
-        $job_title = get_field('job_title', $post->ID); // Pull the ACF field
+    $post_id = null;
 
-        if ($job_title) {
-            return '<div class="person-job-title">' . esc_html($job_title) . '</div>';
-        } else {
-            return '<div class="person-job-title empty">No Job Title set.</div>';
+    // Figure out which post we’re targeting
+    if (!empty($atts['id'])) {
+        $post_id = intval($atts['id']);
+    } elseif (!empty($atts['slug'])) {
+        $person = get_page_by_path(sanitize_title($atts['slug']), OBJECT, 'person');
+        if ($person) {
+            $post_id = $person->ID;
         }
+    } else {
+        $post_id = get_the_ID();
     }
 
-    return ''; // Return nothing if not on a 'person' CPT
+    // Debug check – are we getting the right post?
+    if (!$post_id) {
+        return '<!-- No post ID resolved -->';
+    }
+
+    // Ensure it’s the Person CPT
+    if (get_post_type($post_id) !== 'person') {
+        return '<!-- Post ' . $post_id . ' is not type person -->';
+    }
+
+    // Pull ACF field
+    $job_title = get_field('job_title', $post_id);
+
+    if ($job_title) {
+        return '<span class="person-job-title">' . esc_html($job_title) . '</span>';
+    }
+
+    return '<!-- No job_title field found for post ' . $post_id . ' -->';
 }
-add_shortcode('person_job_title', 'person_job_title_shortcode');
+add_shortcode('person_job_title', 'shortcode_person_job_title');
+

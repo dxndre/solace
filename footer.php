@@ -17,7 +17,14 @@
 			<div class="container inner-footer">
 				<div class="row">
 					<div class="col-md-6">
-						<p><?php printf( esc_html__( '&copy; %1$s %2$s. All rights reserved.', 'solace-digital' ), wp_date( 'Y' ), get_bloginfo( 'name', 'display' ) ); ?></p>
+						<p><?php printf( esc_html__( '&copy; %1$s %2$s ', 'solace-digital' ), wp_date( 'Y' ), get_bloginfo( 'name', 'display' ) ); ?>by <a href="https://www.dxndre.co.uk" target="_blank">DXNDRE</a>. All Rights Reserved.</p>
+					</div>
+					<div class="col-md-2 offset-md-4 socials-container">
+						<ul class="socials">
+							<li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+							<li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
+							<li><a href="#"><i class="fa-brands fa-youtube"></i></a></li>
+						</ul>
 					</div>
 
 					<?php

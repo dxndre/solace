@@ -271,10 +271,10 @@ body {
 					&::before {
 						content: "";
 						position: absolute;
-						top: 0;
+						top: 50%;
 						left: 0;
 						width: 100%;
-						height: 100%;
+						height: 50%;
 						background-image: linear-gradient(180deg, #00000000, #000000);
 						opacity: 1;
 						pointer-events: none;
@@ -298,6 +298,7 @@ body {
 
 					&::after {
 						content: counter(film-counter);
+						font-family: Helvetica, sans-serif;
 						position: absolute;
 						bottom: 0px;
 						right: 10px;
@@ -330,6 +331,47 @@ body {
 			}
 
 			.crew {
+				ul {
+					@keyframes glow-1 {
+						0% {
+							box-shadow: 20px 20px 1700px -100px #2c00ff;
+						}
+						50% {
+							box-shadow: 20px 20px 1700px -100px #ff220d;
+						}
+						100% {
+							box-shadow: 20px 20px 1700px -100px #2c00ff;
+						}
+					}
+
+					@keyframes glow-2 {
+						0% {
+							box-shadow: -200px 20px 1700px -100px #ff220d;
+						}
+						50% {
+							box-shadow: -200px 20px 1700px -100px #2c00ff;
+						}
+						100% {
+							box-shadow: -200px 20px 1700px -100px #ff220d;
+						}
+					}
+
+					li {
+						&:nth-of-type(1) {
+							a {
+								position: relative;
+								z-index: 1;
+								animation: glow-1 20s ease-in-out infinite;
+							}
+						}
+						&:nth-of-type(2) {
+							a {
+								animation: glow-2 20s ease-in-out infinite;
+							}
+						}
+					}
+				}
+
 				a {
 					&::before {
 						content: "";
@@ -358,6 +400,8 @@ body {
 							transition: 0.15s all ease;
 						}
 					}
+
+					
 				}
 
 				.name {
@@ -378,6 +422,21 @@ body {
 				.inner-form {
 					display: flex;
 					gap: 16px;
+
+					input,
+					select,
+					textarea {
+						&:focus,
+						&:focus-visible,
+						&:focus-within {
+							outline: none;
+							border-bottom: 1px dashed white;
+						}
+
+						&.wpcf7-not-valid {
+							border-bottom: 1px solid red;
+						}
+					}
 
 					input,
 					select {
@@ -419,6 +478,7 @@ body {
 				}
 
 				.wpcf7-submit {
+					font-weight: bold;
 					width: 200px;
 					padding: 16px;
 					margin-top: 2em;
@@ -605,20 +665,53 @@ img {
 	background-color: #000;
 	border-bottom: 5px solid white;
 	z-index: 1;
+	position: relative;
 
 	.inner-footer {
+		color: white;
 		border-top: 1px solid white;
 		padding: 1em 0;
 	}
 
 	p {
 		margin-top: 10px;
+		margin-bottom: 4px;
+
+		a {
+			color: white;
+			border-bottom: 1px solid white;
+		}
+	}
+
+	span {
+		font-weight: lighter;
 	}
 
 	.menu-item {
 		a {
 			&[aria-current='page'] {
 				color: $link-hover-color;
+			}
+		}
+	}
+
+	.socials-container {
+		align-items: center;
+		display: flex;
+		justify-content: right;
+	}
+
+	.socials {
+		display: flex;
+		gap: 12px;
+		justify-content: right;
+
+		li {
+			list-style: none;
+
+			a {
+				color: white;
+				font-size: 1.75em;
 			}
 		}
 	}
