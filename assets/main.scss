@@ -137,6 +137,22 @@ body {
 		}
 	}
 
+	&.page-template-page-homepage {
+		aside {
+			&.project-menu {
+				display: block;
+				position: fixed;
+				top: 50vh;
+				left: 4em;
+				z-index: 2;
+
+				ul {
+					text-transform: uppercase;
+				}
+			}
+		}
+	}
+
 	/* If WP-Adminbar is visible */
 	&.admin-bar {
 		#header.fixed-top {
@@ -688,6 +704,7 @@ img {
 
 				&:hover {
 					transform: scale(1.05);
+					filter: brightness(5)saturate(0);
 				}
 			}
 		}

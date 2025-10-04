@@ -795,4 +795,3 @@ function solace_register_menus() {
     ) );
 }
 add_action( 'init', 'solace_register_menus' );
-
