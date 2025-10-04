@@ -22,53 +22,79 @@
 
 <div id="wrapper">
 	<header>
-		<nav id="header" class="navbar solace-navbar navbar-expand-md <?php if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) : echo ' fixed-top'; elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) : echo ' fixed-bottom'; endif; if ( is_home() || is_front_page() ) : echo ' home'; endif; ?>">
-			<div class="container">
-				<a class="navbar-brand" href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home">
-					<?php
-						$header_logo = get_theme_mod( 'header_logo' ); // Get custom meta-value.
+		<nav id="header" class="navbar solace-navbar navbar-expand-md <?php 
+			if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) {
+				echo ' fixed-top';
+			} elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) {
+				echo ' fixed-bottom';
+			}
+				if ( is_home() || is_front_page() ) {
+				echo ' home';
+			}
+		?>">
+			<div class="container d-flex align-items-center justify-content-between">
 
-						if ( ! empty( $header_logo ) ) :
-					?>
-						<img src="<?php echo esc_url( $header_logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
+				<!-- Left Menu -->
+				<div class="menu-left d-none d-md-flex">
 					<?php
-						else :
-							echo esc_attr( get_bloginfo( 'name', 'display' ) );
-						endif;
+						wp_nav_menu( array(
+							'theme_location' => 'menu-left',
+							'menu_class'     => 'navbar-nav me-auto mb-2 mb-lg-0 navbar-left',
+							'container'      => false,
+							'depth'          => 1,
+							'walker'         => new WP_Bootstrap_Navwalker(),
+							'fallback_cb'    => false,
+						) );
 					?>
+				</div>
+
+				<!-- Logo -->
+				<a class="navbar-brand mx-auto" href="<?php echo esc_url( home_url() ); ?>" rel="home">
+					<?php if ( ! empty( $header_logo ) ) : ?>
+						<img src="<?php echo esc_url( $header_logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
+					<?php elseif ( file_exists( get_stylesheet_directory() . '/logo.png' ) ) : ?>
+						<img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/logo.png' ); ?>" 
+         alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
+					<?php else : ?>
+						<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>
+					<?php endif; ?>
 				</a>
 
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle navigation', 'solace-digital' ); ?>">
+				<!-- Right Menu -->
+				<div class="menu-right d-none d-md-flex">
+					<?php
+						wp_nav_menu( array(
+							'theme_location' => 'menu-right',
+							'menu_class'     => 'navbar-nav ms-auto mb-2 mb-lg-0 navbar-right',
+							'container'      => false,
+							'depth'          => 1,
+							'walker'         => new WP_Bootstrap_Navwalker(),
+							'fallback_cb'    => false,
+						) );
+					?>
+				</div>
+
+				<!-- Mobile Menu Toggle -->
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle navigation', 'solace-digital' ); ?>">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 
-				<div id="navbar" class="collapse navbar-collapse">
+				<!-- Mobile Menu -->
+				<div id="mobileNav">
+				<!-- <div id="mobileNav" class="collapse navbar-collapse"> -->
 					<?php
-						// Loading WordPress Custom Menu (theme_location).
-						wp_nav_menu(
-							array(
-								'menu_class'     => 'navbar-nav',
-								'container'      => '',
-								'fallback_cb'    => 'WP_Bootstrap_Navwalker::fallback',
-								'walker'         => new WP_Bootstrap_Navwalker(),
-								'theme_location' => 'main-menu',
-							)
-						);
+						wp_nav_menu( array(
+							'theme_location' => 'main-menu',
+							'menu_class'     => 'navbar-nav me-auto mb-2 mb-lg-0',
+							'container'      => false,
+							'walker'         => new WP_Bootstrap_Navwalker(),
+						) );
+					?>
+				</div>
 
-						if ( '1' === $search_enabled ) :
-					?>
-							<form class="search-form my-2 my-lg-0" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-								<div class="input-group">
-									<input type="text" name="s" class="form-control" placeholder="<?php esc_attr_e( 'Search', 'solace-digital' ); ?>" title="<?php esc_attr_e( 'Search', 'solace-digital' ); ?>" />
-									<button type="submit" name="submit" class="btn btn-outline-secondary"><?php esc_html_e( 'Search', 'solace-digital' ); ?></button>
-								</div>
-							</form>
-					<?php
-						endif;
-					?>
-				</div><!-- /.navbar-collapse -->
-			</div><!-- /.container -->
-		</nav><!-- /#header -->
+			</div>
+		</nav>
+
 	</header>
 
 	<main id="main" class=""<?php if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) : echo ' style="padding-top: 0px;"'; elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) : echo ' style="padding-bottom: 100px;"'; endif; ?>>

@@ -595,6 +595,42 @@ function now_playing_shortcode( $atts ) {
 add_shortcode( 'now_playing', 'now_playing_shortcode' );
 
 
+function mytheme_enqueue_swiper() {
+    // Swiper CSS
+    wp_enqueue_style(
+        'swiper-css',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+        [],
+        null
+    );
+
+    // Swiper JS
+    wp_enqueue_script(
+        'swiper-js',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+        [],
+        null,
+        true
+    );
+
+    // Init script
+    wp_add_inline_script(
+        'swiper-js',
+        'document.addEventListener("DOMContentLoaded", function() {
+            new Swiper(".my-post-carousel", {
+                slidesPerView: 3,
+                spaceBetween: 20,
+                grabCursor: true,
+                loop: true,
+                navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+                pagination: { el: ".swiper-pagination", clickable: true },
+            });
+        });'
+    );
+}
+add_action('wp_enqueue_scripts', 'mytheme_enqueue_swiper');
+
+
 // Get Job Ttile to show up in the CMS
 
 // Shortcode: [person_job_title]
@@ -638,4 +674,125 @@ function shortcode_person_job_title($atts) {
     return '<!-- No job_title field found for post ' . $post_id . ' -->';
 }
 add_shortcode('person_job_title', 'shortcode_person_job_title');
+
+// Shortcode for gutenburg carousel
+function my_post_type_carousel_shortcode($atts) {
+    $atts = shortcode_atts([
+        'post_type' => 'post',
+        'posts_per_page' => 6,
+    ], $atts);
+
+    $query = new WP_Query([
+        'post_type'      => $atts['post_type'],
+        'posts_per_page' => $atts['posts_per_page'],
+    ]);
+
+    ob_start();
+    if ($query->have_posts()) : ?>
+        <div class="swiper my-post-carousel">
+            <div class="swiper-wrapper">
+                <?php while ($query->have_posts()) : $query->the_post(); ?>
+                    <div class="swiper-slide">
+                        <a href="<?php the_permalink(); ?>">
+                            <?php if (has_post_thumbnail()) : ?>
+                                <?php the_post_thumbnail('medium'); ?>
+                            <?php endif; ?>
+                            <h3><?php the_title(); ?></h3>
+                        </a>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+
+            <!-- Optional navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    <?php endif;
+    wp_reset_postdata();
+
+    return ob_get_clean();
+}
+add_shortcode('post_carousel', 'my_post_type_carousel_shortcode');
+
+function post_carousel_shortcode($atts) {
+    $atts = shortcode_atts([
+        'post_type'      => 'solace-film',
+        'posts_per_page' => 8,
+    ], $atts, 'post_carousel');
+
+    $query = new WP_Query([
+        'post_type'      => $atts['post_type'],
+        'posts_per_page' => $atts['posts_per_page'],
+    ]);
+
+    if (!$query->have_posts()) {
+        return '<p>No posts found.</p>';
+    }
+
+    $output  = '<div class="post-carousel-wrapper">';
+    $output .= '<div class="post-carousel">';
+
+    while ($query->have_posts()) {
+        $query->the_post();
+        $output .= '<div class="carousel-item">';
+        $output .= '<h3>' . get_the_title() . '</h3>';
+        $output .= '</div>';
+    }
+
+    $output .= '</div>'; // .post-carousel
+    $output .= '</div>'; // .post-carousel-wrapper
+
+    // Include simple JS for dragging
+    $output .= '
+    <script>
+    (function() {
+        const carousel = document.querySelector(".post-carousel");
+        let isDown = false, startX, scrollLeft;
+
+        carousel.addEventListener("mousedown", (e) => {
+            isDown = true;
+            carousel.classList.add("active");
+            startX = e.pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+        });
+        carousel.addEventListener("mouseleave", () => {
+            isDown = false;
+            carousel.classList.remove("active");
+        });
+        carousel.addEventListener("mouseup", () => {
+            isDown = false;
+            carousel.classList.remove("active");
+        });
+        carousel.addEventListener("mousemove", (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - carousel.offsetLeft;
+            const walk = (x - startX) * 2; // scroll-fast
+            carousel.scrollLeft = scrollLeft - walk;
+        });
+    })();
+    </script>
+    ';
+
+    wp_reset_postdata();
+    return $output;
+}
+add_shortcode('post_carousel', 'post_carousel_shortcode');
+
+function test_carousel_shortcode() {
+    return '<p>Shortcode is working</p>';
+}
+add_shortcode('test_carousel', 'test_carousel_shortcode');
+
+
+// Split menu functionality 
+
+function solace_register_menus() {
+    register_nav_menus( array(
+        'menu-left'  => __( 'Header Left Menu', 'solace-digital' ),
+        'menu-right' => __( 'Header Right Menu', 'solace-digital' ),
+    ) );
+}
+add_action( 'init', 'solace_register_menus' );
 
