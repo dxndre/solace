@@ -2,89 +2,115 @@
 import * as bootstrap from 'bootstrap';
 
 (function () {
-	'use strict';
+    'use strict';
 
-	// Focus input if Searchform is empty
-	[].forEach.call(document.querySelectorAll('.search-form'), (el) => {
-		el.addEventListener('submit', function (e) {
-			var search = el.querySelector('input');
-			if (search.value.length < 1) {
-				e.preventDefault();
-				search.focus();
-			}
-		});
-	});
+    // Focus input if Searchform is empty
+    [].forEach.call(document.querySelectorAll('.search-form'), (el) => {
+        el.addEventListener('submit', function (e) {
+            var search = el.querySelector('input');
+            if (search.value.length < 1) {
+                e.preventDefault();
+                search.focus();
+            }
+        });
+    });
 
-	// Initialize Popovers: https://getbootstrap.com/docs/5.0/components/popovers
-	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-		return new bootstrap.Popover(popoverTriggerEl, {
-			trigger: 'focus',
-		});
-	});
+    // Initialize Popovers
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl, { trigger: 'focus' });
+    });
 })();
 
-
 // Scroll classes for Navbar
-
 document.addEventListener("scroll", function () {
-  const navbar = document.getElementById("header");
-
-  if (window.scrollY > 10) {
-    navbar.classList.add("scrolled");
-  } else {
-    navbar.classList.remove("scrolled");
-  }
+    const navbar = document.getElementById("header");
+    if (window.scrollY > 10) {
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
+    }
 });
 
-
-// Homepage scrolling functionality
-
+// Homepage projects functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const menuLinks = document.querySelectorAll('.project-menu a');
-    const sections = document.querySelectorAll('.wp-block-cover');
-    const mediaImg = document.getElementById('dynamic-media');
+    const reel = document.querySelector('.projects-reel');
+    if (!reel) return;
 
+    const menuLinks = document.querySelectorAll('.project-menu a');
+    const sections = reel.querySelectorAll('.wp-block-cover');
+
+    let isScrolling = false;
+
+    const scrollToSection = (targetIndex) => {
+        if (targetIndex < 0 || targetIndex >= sections.length) return;
+        isScrolling = true;
+        reel.scrollTo({
+            top: sections[targetIndex].offsetTop,
+            behavior: 'smooth'
+        });
+        setTimeout(() => {
+            isScrolling = false;
+        }, 600); // allow smooth scroll to finish
+    };
+
+    // Wheel event to iterate one section at a time
+    reel.addEventListener('wheel', (e) => {
+        if (isScrolling) {
+            e.preventDefault();
+            return;
+        }
+
+        const delta = e.deltaY;
+        const scrollTop = reel.scrollTop;
+
+        // Determine current section
+        let currentIndex = 0;
+        sections.forEach((section, idx) => {
+            if (scrollTop >= section.offsetTop) currentIndex = idx;
+        });
+
+        if (delta > 0 && currentIndex < sections.length - 1) {
+            // Scroll down
+            e.preventDefault();
+            scrollToSection(currentIndex + 1);
+        } else if (delta < 0 && currentIndex > 0) {
+            // Scroll up
+            e.preventDefault();
+            scrollToSection(currentIndex - 1);
+        }
+        // Otherwise allow normal scrolling if at start or end
+    }, { passive: false });
+
+    // Update menu active state
     function updateMenu() {
-        let current = null;
-        const viewportCenter = window.scrollY + window.innerHeight / 2;
+        const viewportCenter = reel.scrollTop + reel.clientHeight / 2;
+        let currentSectionId = null;
 
         sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionBottom = sectionTop + section.offsetHeight;
-
-            if (viewportCenter >= sectionTop && viewportCenter < sectionBottom) {
-                current = section.id || section.dataset.anchor;
+            const top = section.offsetTop;
+            const bottom = top + section.offsetHeight;
+            if (viewportCenter >= top && viewportCenter < bottom) {
+                currentSectionId = section.id;
             }
         });
 
         menuLinks.forEach(link => {
             const li = link.parentElement;
+            const targetId = link.getAttribute('href').replace('#', '');
+
             li.classList.remove('active');
+            const oldBtn = li.querySelector('.open-project-btn');
+            if (oldBtn) oldBtn.remove();
 
-            // Remove old Open Project buttons
-            const oldButton = li.querySelector('.open-project-btn');
-            if (oldButton) oldButton.remove();
-
-            if (link.getAttribute('href') === '#' + current) {
+            if (targetId === currentSectionId) {
                 li.classList.add('active');
 
-                // Add Open Project button wrapped in <a>
-                const btnLink = document.createElement('a');
-                btnLink.href = '#'; // temporary blank link
-                btnLink.classList.add('open-project-btn');
-                btnLink.textContent = '[Open Project]';
-                li.appendChild(btnLink);
-
-                // Update media
-                const mediaUrl = link.dataset.media;
-                if (mediaUrl) {
-                    mediaImg.style.opacity = 0;
-                    setTimeout(() => {
-                        mediaImg.src = mediaUrl;
-                        mediaImg.style.opacity = 1;
-                    }, 200);
-                }
+                const btn = document.createElement('a');
+                btn.href = '#'; // blank link for now
+                btn.textContent = '[Open Project]';
+                btn.classList.add('open-project-btn');
+                li.appendChild(btn);
             }
         });
     }
@@ -96,17 +122,48 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetId = link.getAttribute('href').substring(1);
             const target = document.getElementById(targetId);
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                updateMenu(); // immediately highlight clicked item
+                reel.scrollTo({
+                    top: target.offsetTop,
+                    behavior: 'smooth'
+                });
             }
+            setTimeout(updateMenu, 100);
         });
     });
 
-    // Scroll event
-    window.addEventListener('scroll', updateMenu);
+    // Listen to reel scroll
+    reel.addEventListener('scroll', updateMenu);
 
     // Initialize menu state
     updateMenu();
+
+
+	// Project Menu visibility
+
+	const projectMenu = document.querySelector('.project-menu');
+	const lastSection = sections[sections.length - 1];
+
+	function toggleMenuVisibility() {
+		const reelRect = reel.getBoundingClientRect();
+		const lastSectionBottom = lastSection.getBoundingClientRect().bottom;
+
+		// Hide menu if bottom of last section is above the top of viewport
+		if (lastSectionBottom <= 0) {
+			projectMenu.style.opacity = '0';
+			projectMenu.style.pointerEvents = 'none';
+		} else {
+			projectMenu.style.opacity = '1';
+			projectMenu.style.pointerEvents = 'auto';
+		}
+	}
+
+	// Call on reel scroll
+	reel.addEventListener('scroll', toggleMenuVisibility);
+
+	// Optional: call on window scroll too if needed
+	window.addEventListener('scroll', toggleMenuVisibility);
+
+	// Initialize
+	toggleMenuVisibility();
+
 });
-
-
