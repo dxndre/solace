@@ -71,9 +71,9 @@ if (!empty($cover_blocks)) :
 </aside>
 
 <!-- Fixed background media -->
-<div class="project-media">
+<!-- <div class="project-media">
     <img src="" alt="Background Media" id="dynamic-media">
-</div>
+</div> -->
 
 <?php endif; ?>
 

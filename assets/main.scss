@@ -147,7 +147,31 @@ body {
 				z-index: 2;
 
 				ul {
-					text-transform: uppercase;
+					li {
+						list-style: none;
+						margin-bottom: 5px;
+
+						a {
+							color: white;
+							text-transform: uppercase;
+							padding-left: 0;
+							transition: 0.3s all ease;
+						}
+
+						&:hover {
+							a {
+								padding-left: 12px;
+								transition: 0.3s all ease;
+							}
+						}
+
+						&:active {
+							a {
+								color: #ff0000;
+								transition: 0.3s all ease;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -328,6 +352,17 @@ body {
 			}
 		}
 
+		&.projects-reel {
+			scroll-snap-type: y mandatory;
+			overflow-y: scroll;
+			height: 100vh;
+			scroll-behavior: smooth;
+
+			.wp-block-cover {
+				scroll-snap-align: start;      /* snap each block to top */
+				min-height: 100vh;
+			}
+		}
 
 		&.about-text {
 			padding: 5em 0;
@@ -645,7 +680,7 @@ img {
 
 #header {
 	&.solace-navbar {
-		border-top: 5px solid white;
+		// border-top: 5px solid white;
 		background: transparent;
 		padding: 20px 0;
 		backdrop-filter: blur(0px);
@@ -701,10 +736,12 @@ img {
 				height: 40px;
 				width: auto;
 				transition: transform 0.3s ease;
+				transition: 0.3s all ease;
 
 				&:hover {
 					transform: scale(1.05);
-					filter: brightness(5)saturate(0);
+					filter: brightness(15)saturate(0);
+					transition: 0.3s all ease;
 				}
 			}
 		}

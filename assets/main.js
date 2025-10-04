@@ -25,7 +25,6 @@ import * as bootstrap from 'bootstrap';
 })();
 
 
-
 // Scroll classes for Navbar
 
 document.addEventListener("scroll", function () {
@@ -37,3 +36,77 @@ document.addEventListener("scroll", function () {
     navbar.classList.remove("scrolled");
   }
 });
+
+
+// Homepage scrolling functionality
+
+document.addEventListener('DOMContentLoaded', () => {
+    const menuLinks = document.querySelectorAll('.project-menu a');
+    const sections = document.querySelectorAll('.wp-block-cover');
+    const mediaImg = document.getElementById('dynamic-media');
+
+    function updateMenu() {
+        let current = null;
+        const viewportCenter = window.scrollY + window.innerHeight / 2;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+
+            if (viewportCenter >= sectionTop && viewportCenter < sectionBottom) {
+                current = section.id || section.dataset.anchor;
+            }
+        });
+
+        menuLinks.forEach(link => {
+            const li = link.parentElement;
+            li.classList.remove('active');
+
+            // Remove old Open Project buttons
+            const oldButton = li.querySelector('.open-project-btn');
+            if (oldButton) oldButton.remove();
+
+            if (link.getAttribute('href') === '#' + current) {
+                li.classList.add('active');
+
+                // Add Open Project button wrapped in <a>
+                const btnLink = document.createElement('a');
+                btnLink.href = '#'; // temporary blank link
+                btnLink.classList.add('open-project-btn');
+                btnLink.textContent = '[Open Project]';
+                li.appendChild(btnLink);
+
+                // Update media
+                const mediaUrl = link.dataset.media;
+                if (mediaUrl) {
+                    mediaImg.style.opacity = 0;
+                    setTimeout(() => {
+                        mediaImg.src = mediaUrl;
+                        mediaImg.style.opacity = 1;
+                    }, 200);
+                }
+            }
+        });
+    }
+
+    // Smooth scroll for menu links
+    menuLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                updateMenu(); // immediately highlight clicked item
+            }
+        });
+    });
+
+    // Scroll event
+    window.addEventListener('scroll', updateMenu);
+
+    // Initialize menu state
+    updateMenu();
+});
+
+
