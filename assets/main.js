@@ -174,8 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const covers = document.querySelectorAll('.wp-block-cover');
   const main = document.querySelector('main');
+  const projectsReel = document.querySelector('.projects-reel');
 
-  // ---- Intersection Observer for active class ----
+  // ---- Intersection Observer for active cover blocks ----
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -187,22 +188,88 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     },
     {
-      threshold: 0.25, // Trigger when 25% of the block is visible
+      threshold: 0.25, // 25% visible
     }
   );
 
   covers.forEach((cover) => observer.observe(cover));
 
-  // ---- Scroll detection for "scrolling" class ----
-  let scrollTimeout;
+  // ---- "scrolling" class for <main> ----
+  let mainScrollTimeout;
   window.addEventListener('scroll', () => {
     if (!main) return;
-
     main.classList.add('scrolling');
-    clearTimeout(scrollTimeout);
-
-    scrollTimeout = setTimeout(() => {
+    clearTimeout(mainScrollTimeout);
+    mainScrollTimeout = setTimeout(() => {
       main.classList.remove('scrolling');
-    }, 250); // Remove class 250ms after user stops scrolling
+    }, 250);
   });
+
+  // ---- "scrolling" class for .projects-reel ----
+  if (projectsReel) {
+    let reelScrollTimeout;
+
+    projectsReel.addEventListener('scroll', () => {
+      projectsReel.classList.add('scrolling');
+      clearTimeout(reelScrollTimeout);
+
+      reelScrollTimeout = setTimeout(() => {
+        projectsReel.classList.remove('scrolling');
+      }, 250); // 250ms after user stops scrolling
+    });
+  }
 });
+
+
+// Slide counter for homepage projects
+
+document.addEventListener('DOMContentLoaded', () => {
+  const covers = document.querySelectorAll('.wp-block-cover');
+  const projectsReel = document.querySelector('.projects-reel');
+  const slideCounter = document.getElementById('slide-counter');
+  const totalSlides = covers.length;
+  let currentSlide = 1;
+
+  if (slideCounter) {
+    slideCounter.textContent = `1 / ${totalSlides}`;
+  }
+
+  // Observe which cover is in view
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          covers.forEach((cover, i) => {
+            if (cover === entry.target) {
+              currentSlide = i + 1;
+              if (slideCounter) {
+                slideCounter.textContent = `${currentSlide} / ${totalSlides}`;
+              }
+            }
+          });
+          entry.target.classList.add('active');
+        } else {
+          entry.target.classList.remove('active');
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
+
+  covers.forEach((cover) => observer.observe(cover));
+
+  // Fade counter in/out when the projects reel enters/leaves viewport
+  const reelObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (slideCounter) {
+          slideCounter.classList.toggle('visible', entry.isIntersecting);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  if (projectsReel) reelObserver.observe(projectsReel);
+});
+

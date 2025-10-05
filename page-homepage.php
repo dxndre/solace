@@ -70,10 +70,10 @@ if (!empty($cover_blocks)) :
     </ul>
 </aside>
 
-<!-- Fixed background media -->
-<!-- <div class="project-media">
-    <img src="" alt="Background Media" id="dynamic-media">
-</div> -->
+<div class="slide-counter-container">
+	<div id="slide-counter" aria-label="Slide counter">1 / 1</div>
+</div>
+
 
 <?php endif; ?>
 
