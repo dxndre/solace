@@ -193,9 +193,16 @@ body {
 				bottom: 3em;
 				color: #fff;
 				font-size: 14px;
+				font-weight: bolder;
 				z-index: 2;
 				width: 100%;
 				text-align: center;
+			}
+		}
+
+		#footer {
+			.inner-footer {
+				border-top: none;
 			}
 		}
 	}
@@ -406,7 +413,8 @@ body {
 						transition: 1s all ease;
 
 						h2 {
-							margin-bottom: 1em;
+							font-size: 3em !important;
+							margin-bottom: 12px;
 						}
 					}
 				}
@@ -922,7 +930,6 @@ img {
 
 #footer {
 	background-color: #000;
-	border-bottom: 5px solid white;
 	z-index: 1;
 	position: relative;
 
