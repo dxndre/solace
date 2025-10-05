@@ -368,6 +368,21 @@ body {
 					width: 100%;
 					max-width: 768px;
 					margin: 0 auto;
+					opacity: 0;
+					transform: translateY(40px);
+					transition: 1s all ease;
+				}
+
+				&.active {
+					.project-text {
+						opacity: 1;
+						transform: translateY(0);
+						transition: 1s all ease;
+
+						h2 {
+							margin-bottom: 1em;
+						}
+					}
 				}
 			}
 		}

@@ -167,3 +167,42 @@ document.addEventListener('DOMContentLoaded', () => {
 	toggleMenuVisibility();
 
 });
+
+
+// "Active" classes for the Gutenburg Cover blocks and "Scrolling" class for the <main> 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const covers = document.querySelectorAll('.wp-block-cover');
+  const main = document.querySelector('main');
+
+  // ---- Intersection Observer for active class ----
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        } else {
+          entry.target.classList.remove('active');
+        }
+      });
+    },
+    {
+      threshold: 0.25, // Trigger when 25% of the block is visible
+    }
+  );
+
+  covers.forEach((cover) => observer.observe(cover));
+
+  // ---- Scroll detection for "scrolling" class ----
+  let scrollTimeout;
+  window.addEventListener('scroll', () => {
+    if (!main) return;
+
+    main.classList.add('scrolling');
+    clearTimeout(scrollTimeout);
+
+    scrollTimeout = setTimeout(() => {
+      main.classList.remove('scrolling');
+    }, 250); // Remove class 250ms after user stops scrolling
+  });
+});
