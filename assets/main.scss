@@ -122,6 +122,60 @@ $link-decoration: none;
 	background-color: black;
  }
 
+ #splash-screen {
+	position: fixed;
+	inset: 0;
+	background: #000; // or brand colour
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.8s ease, visibility 0.8s ease;
+
+	&.hidden {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+	}
+
+	.splash-content {
+		text-align: center;
+		color: #fff;
+
+		.splash-logo {
+		width: 180px;
+		height: auto;
+		margin-bottom: 1.5rem;
+		animation: fadeIn 1s ease forwards;
+		}
+
+		.splash-loader {
+			font-size: 1.4rem;
+			font-family: monospace;
+			letter-spacing: 1px;
+			}
+		}
+	}
+
+	@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.hero-header {
+	height: 500px;
+	display: flex;
+	align-items: center;
+}
+
 body {
 	font-family: "JetBrains Mono", monospace;
 	background-color: black;
@@ -151,10 +205,37 @@ body {
 
 					li {
 						list-style: none;
-						margin: 8px 0;
+						margin: 12px 0;
+						transition: 0.3s all ease;
+
+						&::before {
+							content: "";
+							display: block;
+							width: 16px;
+							background-color: rgba(255, 255, 255, 0.125);
+							height: 1px;
+							position: relative;
+							left: -32px;
+							top: 12px;
+							transition: 0.3s all ease;
+						}
+
+						&:hover {
+							&::before {
+								background-color: rgba(255, 255, 255, 0.75);
+								width: 32px;
+								transition: 0.3s all ease;
+							}
+
+							a {
+								color: white;
+								transition: 0.3s all ease;
+							}
+						}
 
 						a {
-							color: white;
+							// font-family: "Inter", sans-serif;
+							color: rgba(255, 255, 255, 0.75);
 							text-transform: uppercase;
 							padding-left: 0;
 							transition: 0.7s all ease;
@@ -167,9 +248,19 @@ body {
 							}
 						}
 
+						&:active {
+							transform: scale(1.05);
+							transition: 0.2s all ease;
+						}
+
 						&.active {
+							&::before {
+								background-color: rgba(255, 0, 0, 0.75);
+								transition: 0.3s all ease;
+							}
+							
 							a {
-								font-size: 1.5em;
+								font-size: 1.25em;
 								color: #ff0000;
 								transition: 0.3s all ease;
 							}
@@ -206,6 +297,10 @@ body {
 			}
 		}
 	}
+
+	// &.page-template-default {
+		
+	// }
 
 	&.admin-bar {
 		#header.fixed-top {
@@ -413,7 +508,8 @@ body {
 						transition: 1s all ease;
 
 						h2 {
-							font-size: 3em !important;
+							font-family: "JetBrains Mono", monospace;
+							font-size: 4em !important;
 							margin-bottom: 12px;
 						}
 					}
@@ -885,8 +981,6 @@ img {
 /* Main */
 
 #main {
-	// margin-top: $spacer;
-
 	img {
 		-webkit-user-drag: none; /* Safari/Chrome */
 		-khtml-user-drag: none;  /* Old Konqueror */

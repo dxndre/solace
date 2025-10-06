@@ -273,3 +273,65 @@ document.addEventListener('DOMContentLoaded', () => {
   if (projectsReel) reelObserver.observe(projectsReel);
 });
 
+
+// Splash Screen functionality
+
+document.addEventListener("DOMContentLoaded", () => {
+  const splash = document.getElementById("splash-screen");
+  const percent = document.getElementById("splash-percent");
+
+  if (!splash || !percent) return;
+
+  document.body.style.overflow = "hidden"; // Lock scroll until loaded
+
+  const images = document.images;
+  const total = images.length;
+  let loaded = 0;
+  let displayedProgress = 0; // Smooth counter display
+
+  if (total === 0) {
+    finishLoading();
+  } else {
+    [...images].forEach((img) => {
+      const imageClone = new Image();
+      imageClone.onload = imageClone.onerror = () => {
+        loaded++;
+        updateProgress();
+      };
+      imageClone.src = img.src;
+    });
+  }
+
+  function updateProgress() {
+    const targetProgress = Math.floor((loaded / total) * 100);
+    animateCounter(targetProgress);
+
+    if (loaded === total) {
+      setTimeout(finishLoading, 500);
+    }
+  }
+
+  // Smoothly animates number transitions
+  function animateCounter(target) {
+    const step = () => {
+      displayedProgress += (target - displayedProgress) * 0.2; // Ease speed
+      if (Math.abs(target - displayedProgress) < 1) {
+        displayedProgress = target;
+      }
+
+      percent.textContent = `${Math.round(displayedProgress)}%`;
+
+      if (displayedProgress < target) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }
+
+  function finishLoading() {
+    setTimeout(() => {
+      splash.classList.add("hidden");
+      document.body.style.overflow = "auto";
+    }, 300); // allow small fade buffer
+  }
+});

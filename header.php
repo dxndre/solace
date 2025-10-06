@@ -16,6 +16,16 @@
 
 <body <?php body_class(); ?>>
 
+<div id="splash-screen">
+  <div class="splash-content">
+    <img class="splash-logo" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/logo.png' ); ?>" 
+         alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
+    <div class="splash-loader">
+      <span id="splash-percent">0%</span>
+    </div>
+  </div>
+</div>
+
 <?php wp_body_open(); ?>
 
 <a href="#main" class="visually-hidden-focusable"><?php esc_html_e( 'Skip to main content', 'solace-digital' ); ?></a>
@@ -107,3 +117,4 @@
 		<?php
 			endif;
 		?>
+

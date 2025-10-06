@@ -7,10 +7,25 @@
 
 get_header();
 
+?>
+
+<div class="hero-header">
+	<div class="container">
+		<?php
+			if ( has_post_thumbnail() ) {
+				the_post_thumbnail( 'full', array( 'class' => 'img-fluid' ) );
+			}
+		?>
+		<h1 class="entry-title"><?php the_title(); ?></h1>
+	</div>
+</div>
+
+<?php
 the_post();
 ?>
+
+
 <div id="post-<?php the_ID(); ?>" <?php post_class( 'content' ); ?>>
-	<h1 class="entry-title"><?php the_title(); ?></h1>
 	<?php
 		the_content();
 
