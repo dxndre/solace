@@ -166,6 +166,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Initialize
 	toggleMenuVisibility();
 
+
+	// Animate in project menu items with stagger
+	const projectItems = document.querySelectorAll('.project-menu li');
+	projectItems.forEach((item, i) => {
+	item.style.animationDelay = `${i * 0.1}s`; // 0.1s stagger
+	});
+
+
 });
 
 
@@ -279,6 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener("DOMContentLoaded", () => {
   const splash = document.getElementById("splash-screen");
   const percent = document.getElementById("splash-percent");
+  const bar = document.querySelector(".progress-fill");
+
 
   if (!splash || !percent) return;
 
@@ -313,20 +323,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Smoothly animates number transitions
   function animateCounter(target) {
-    const step = () => {
-      displayedProgress += (target - displayedProgress) * 0.2; // Ease speed
-      if (Math.abs(target - displayedProgress) < 1) {
-        displayedProgress = target;
-      }
+  const step = () => {
+    displayedProgress += (target - displayedProgress) * 0.2;
+    if (Math.abs(target - displayedProgress) < 1) {
+      displayedProgress = target;
+    }
 
-      percent.textContent = `${Math.round(displayedProgress)}%`;
+    percent.textContent = `${Math.round(displayedProgress)}%`;
+    if (bar) bar.style.width = `${Math.round(displayedProgress)}%`;
 
-      if (displayedProgress < target) {
-        requestAnimationFrame(step);
-      }
-    };
-    requestAnimationFrame(step);
-  }
+    if (displayedProgress < target) {
+      requestAnimationFrame(step);
+    }
+  };
+  requestAnimationFrame(step);
+}
+
 
   function finishLoading() {
     setTimeout(() => {
@@ -335,3 +347,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300); // allow small fade buffer
   }
 });
+
+
+// Reset project video on re-entry to viewport (with auto-pause)
+
+document.addEventListener("DOMContentLoaded", () => {
+  const covers = document.querySelectorAll(".wp-block-cover");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const video = entry.target.querySelector("video");
+
+      if (video) {
+        if (entry.isIntersecting) {
+          // Pause all other videos
+          document.querySelectorAll(".wp-block-cover video").forEach(v => {
+            if (v !== video) {
+              v.pause();
+              v.classList.remove("is-visible");
+            }
+          });
+
+          // Reset & play the current one
+          video.currentTime = 0;
+          video.classList.add("is-visible");
+          video.play().catch(() => {}); // Prevent autoplay error
+        } else {
+          // Pause when leaving viewport
+          video.pause();
+          video.classList.remove("is-visible");
+        }
+      }
+    });
+  }, { threshold: 0.25 }); // Trigger when 25% visible
+
+  covers.forEach(cover => observer.observe(cover));
+});
+

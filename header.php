@@ -23,6 +23,9 @@
     <div class="splash-loader">
       <span id="splash-percent">0%</span>
     </div>
+	<div class="progress-bar">
+		<div class="progress-fill"></div>
+		</div>
   </div>
 </div>
 

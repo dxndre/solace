@@ -145,10 +145,10 @@ $link-decoration: none;
 		color: #fff;
 
 		.splash-logo {
-		width: 180px;
-		height: auto;
-		margin-bottom: 1.5rem;
-		animation: fadeIn 1s ease forwards;
+			width: 180px;
+			height: auto;
+			margin-bottom: 1.5rem;
+			animation: fadeIn 1s ease forwards;
 		}
 
 		.splash-loader {
@@ -156,6 +156,22 @@ $link-decoration: none;
 			font-family: monospace;
 			letter-spacing: 1px;
 			}
+		}
+
+		.progress-bar {
+			width: 100%;
+			height: 4px;
+			background: rgba(255,255,255,0.2);
+			border-radius: 2px;
+			overflow: hidden;
+			margin-top: 0.5rem;
+		}
+
+		.progress-fill {
+			width: 0%;
+			height: 100%;
+			background: #fff;
+			transition: width 0.3s ease;
 		}
 	}
 
@@ -206,7 +222,17 @@ body {
 					li {
 						list-style: none;
 						margin: 12px 0;
+						opacity: 0;
+						transform: translateY(10px);
+						animation: fadeInUp 0.6s forwards;
 						transition: 0.3s all ease;
+
+						@keyframes fadeInUp {
+							to {
+								opacity: 1;
+								transform: translateY(0);
+							}
+						}
 
 						&::before {
 							content: "";
@@ -238,6 +264,7 @@ body {
 							color: rgba(255, 255, 255, 0.75);
 							text-transform: uppercase;
 							padding-left: 0;
+							font-weight: 700;
 							transition: 0.7s all ease;
 						}
 
@@ -260,7 +287,7 @@ body {
 							}
 							
 							a {
-								font-size: 1.25em;
+								font-size: 1.125em;
 								color: #ff0000;
 								transition: 0.3s all ease;
 							}
@@ -520,7 +547,7 @@ body {
 				.wp-block-cover {
 					img,
 					video {
-						filter: saturate(0);
+						filter: saturate(0)blur(15px)brightness(0.75);
 						transform: scale(0.875);
 						transition: 0.5s all ease;
 					}
