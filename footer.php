@@ -1,18 +1,24 @@
 			<?php
-				// If Single or Archive (Category, Tag, Author or a Date based page).
+			// Only wrap/close row/column if NOT a Film post
+			if ( !is_singular('solace-film') ) :
+
+				// If Single or Archive (Category, Tag, Author or a Date based page)
 				if ( is_single() || is_archive() ) :
 			?>
 					</div><!-- /.col -->
 
 					<?php
-						get_sidebar();
+						// get_sidebar();
 					?>
 
 				</div><!-- /.row -->
 			<?php
 				endif;
+
+			endif;
 			?>
 		</main><!-- /#main -->
+
 		<footer id="footer">
 			<div class="container inner-footer">
 				<div class="row">

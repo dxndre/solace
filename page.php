@@ -49,7 +49,7 @@ the_post();
 			?>
 		</div><!-- /.col -->
 		<?php
-			get_sidebar();
+			// get_sidebar();
 		?>
 	</div><!-- /.row -->
 </div>

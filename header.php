@@ -16,7 +16,7 @@
 
 <body <?php body_class(); ?>>
 
-<div id="splash-screen">
+<!-- <div id="splash-screen">
   <div class="splash-content">
     <img class="splash-logo" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/logo.png' ); ?>" 
          alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
@@ -27,7 +27,7 @@
 		<div class="progress-fill"></div>
 		</div>
   </div>
-</div>
+</div> -->
 
 <?php wp_body_open(); ?>
 
@@ -110,14 +110,27 @@
 
 	</header>
 
-	<main id="main" class=""<?php if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) : echo ' style="padding-top: 0px;"'; elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) : echo ' style="padding-bottom: 100px;"'; endif; ?>>
-		<?php
-			// If Single or Archive (Category, Tag, Author or a Date based page).
-			if ( is_single() || is_archive() ) :
-		?>
-			<div class="row">
-				<div class="col-md-8 col-sm-12">
-		<?php
-			endif;
-		?>
+	<main id="main" class=""<?php 
+    if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) :
+        echo ' style="padding-top: 0px;"';
+    elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) :
+        echo ' style="padding-bottom: 100px;"';
+    endif; 
+?>>
+
+<?php
+// Only wrap row/column if NOT a Film post
+if ( !is_singular('solace-film') ) :
+
+    // If Single or Archive (Category, Tag, Author or Date based page)
+    if ( is_single() || is_archive() ) :
+?>
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+<?php
+    endif;
+
+endif;
+?>
+
 
