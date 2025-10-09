@@ -81,37 +81,7 @@ $director      = get_field('director');
 			edit_post_link( __( 'Edit', 'solace-digital' ), '<span class="edit-link">', '</span>' );
 		?>
 
-		<footer class="entry-meta">
-			<hr>
-			<?php
-				/* translators: used between list items, there is a space after the comma */
-				$category_list = get_the_category_list( __( ', ', 'solace-digital' ) );
-
-				/* translators: used between list items, there is a space after the comma */
-				$tag_list = get_the_tag_list( '', __( ', ', 'solace-digital' ) );
-			if ( '' !== $tag_list ) {
-				$utility_text = __( 'This entry was posted in %1$s and tagged %2$s by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'solace-digital' );
-			} elseif ( '' !== $category_list ) {
-				$utility_text = __( 'This entry was posted in %1$s by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'solace-digital' );
-			} else {
-				$utility_text = __( 'This entry was posted by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'solace-digital' );
-			}
-
-				printf(
-					$utility_text,
-					$category_list,
-					$tag_list,
-					esc_url( get_permalink() ),
-					the_title_attribute( array( 'echo' => false ) ),
-					get_the_author(),
-					esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) )
-				);
-				?>
-			<hr>
-			<?php
-				get_template_part( 'author', 'bio' );
-			?>
-		</footer><!-- /.entry-meta -->
+		
 	</article><!-- /#post-<?php the_ID(); ?> -->
 </div>
 

@@ -16,7 +16,7 @@
 
 <body <?php body_class(); ?>>
 
-<!-- <div id="splash-screen">
+<div id="splash-screen">
   <div class="splash-content">
     <img class="splash-logo" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/logo.png' ); ?>" 
          alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
@@ -27,7 +27,7 @@
 		<div class="progress-fill"></div>
 		</div>
   </div>
-</div> -->
+</div>
 
 <?php wp_body_open(); ?>
 

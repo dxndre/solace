@@ -331,11 +331,97 @@ body {
 
 			section {
 				&.content-section {
-					margin-top: -15vh;
+					margin-top: -20vh;
 
 					h2 {
 						margin-top: 3em;
 						margin-bottom: 1em;
+					}
+
+					.text-block {
+						font-family: "Inter", sans-serif;
+						width: 100%;
+						max-width: 700px;
+						margin-bottom: 2em;
+						position: relative;
+						z-index: 2;
+
+						p {
+							font-size: 14px;
+							line-height: 28px;
+							font-weight: 300;
+						}
+					}
+
+					figure {
+						figcaption {
+							font-weight: 300;
+							color: white;
+							text-transform: uppercase;
+							font-family: "Inter", sans-serif;
+							margin: 2em 0;
+
+							a {
+								color: inherit;
+								border-bottom: 1px solid white;
+								transition: 0.3s all ease;
+
+								&:hover {
+									color: red;
+									border-bottom: 1px solid red;
+									transition: 0.3s all ease;
+								}
+							}
+						}
+					}
+				}
+
+				&.project-numbers-section {
+					margin: 3em 0;
+
+					.wp-block-cover {
+						img {
+							filter: blur(15px)brightness(0.75)saturate(0);
+						}
+					}
+
+					h2 {
+						text-align: center;
+					}
+
+					.stats {
+						max-width: 700px;
+						margin: 0 auto;
+
+						.wp-block-column {
+							text-align: center;
+						}
+
+						pre {
+							font-family: "JetBrains Mono", monospace;
+							font-size: 3em;
+							font-weight: 600;
+							line-height: 1.5;
+							white-space: pre-wrap; // Allow wrapping
+							word-break: break-word; // Break long words if necessary
+						}
+					}
+				}
+
+				&.credits-section {
+					margin: 3em 0;
+					position: relative;
+					z-index: 2;
+
+					.role {
+						text-transform: uppercase;
+						font-weight: bolder;
+						margin-bottom: 0.25rem;
+						font-size: 1.25em;
+					}
+
+					.role-person {
+						font-weight: lighter;
 					}
 				}
 			}
@@ -344,7 +430,7 @@ body {
 		.film-hero-header {
 			position: relative;
 			overflow: hidden;
-			min-height: 75vh;
+			min-height: 85vh;
 			display: flex;
 			align-items: center;
 			color: #fff;
@@ -398,7 +484,7 @@ body {
 		.film-meta-container {
 			z-index: 2;
 			position: relative;
-			top: -12.5vh;
+			top: -20vh;
 
 			.film-meta-columns {
 				display: flex;
