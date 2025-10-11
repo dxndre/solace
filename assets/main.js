@@ -389,65 +389,26 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
 	const posts = document.querySelectorAll(".wp-block-post");
 	const bar = document.querySelector(".project-data-bar");
-	const title = bar.querySelector(".film-title");
-	const director = bar.querySelector(".film-director");
-	const release = bar.querySelector(".film-release");
+	if (!bar) return;
+
+	const titleEl = bar.querySelector(".film-title");
+	const directorEl = bar.querySelector(".film-director");
+	const releaseEl = bar.querySelector(".film-release");
 	const viewBtn = bar.querySelector(".view-project-btn");
 	const fullLink = bar.querySelector(".full-project-link");
 
-	posts.forEach(post => {
-		post.addEventListener("mouseenter", () => {
-			bar.classList.add("active");
-			title.textContent = post.dataset.filmTitle || "Untitled";
-			director.textContent = post.dataset.director || "Unknown";
-			release.textContent = post.dataset.release || "";
-			viewBtn.href = post.dataset.link || "#";
-			fullLink.href = post.dataset.link || "#";
-		});
-
-		post.addEventListener("mouseleave", () => {
-			bar.classList.remove("active");
-		});
-
-		// For mobile: tap toggles
-		post.addEventListener("click", () => {
-			bar.classList.add("active");
-			title.textContent = post.dataset.filmTitle || "Untitled";
-			director.textContent = post.dataset.director || "Unknown";
-			release.textContent = post.dataset.release || "";
-			viewBtn.href = post.dataset.link || "#";
-			fullLink.href = post.dataset.link || "#";
-		});
-	});
-});
-
-// Update bar when thumbnail is cicked 
-
-document.addEventListener("DOMContentLoaded", function() {
-	const posts = document.querySelectorAll(".wp-block-post");
-	const bar = document.querySelector(".project-data-bar");
+	const updateBar = (post) => {
+		titleEl.textContent = post.dataset.title || "Untitled";
+		directorEl.textContent = post.dataset.director || "Unknown";
+		releaseEl.textContent = post.dataset.release || "TBC";
+		viewBtn.href = post.dataset.url || "#";
+		fullLink.href = post.dataset.url || "#";
+	};
 
 	posts.forEach(post => {
-		post.addEventListener("click", () => {
-			const title = post.querySelector(".wp-block-post-title")?.textContent || "";
-			const director = post.querySelector(".director-name")?.textContent || "";
-			const releaseDate = post.querySelector(".wp-block-post-date")?.textContent || "";
-
-			bar.innerHTML = `
-				<a href="${post.querySelector("a").href}" class="button">View project</a>
-				<span class="project-stat"><strong>${title}</strong></span>
-				<span class="project-stat">Director: ${director}</span>
-				<span class="project-stat">Release: ${releaseDate}</span>
-			`;
-		});
+		post.addEventListener("mouseenter", () => updateBar(post));
+		post.addEventListener("click", () => updateBar(post)); // Mobile tap
 	});
-
-  function updateBar(post) {
-    titleEl.textContent = post.dataset.title || 'Untitled';
-    directorEl.textContent = post.dataset.director || 'Unknown';
-    releaseEl.textContent = post.dataset.release || 'TBC';
-    viewBtn.href = post.dataset.url || '#';
-}
 });
 
 
@@ -474,25 +435,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const link = film.querySelector('a');
     if (link) film.setAttribute('data-url', link.href);
   });
-});
-
-
-// Update stats bar on Works page when a post is clicked
-
-const statsBar = document.querySelector('.project-data-bar');
-const titleEl = statsBar.querySelector('.film-title');
-const directorEl = statsBar.querySelector('.film-director');
-const releaseEl = statsBar.querySelector('.film-release');
-
-document.querySelectorAll('.wp-block-post').forEach(film => {
-  const updateStats = () => {
-    titleEl.textContent = film.getAttribute('data-title');
-    directorEl.textContent = film.getAttribute('data-director');
-    releaseEl.textContent = film.getAttribute('data-release');
-    statsBar.querySelector('.view-project-btn').href = film.getAttribute('data-url');
-    statsBar.querySelector('.full-project-link').href = film.getAttribute('data-url');
-  };
-
-  film.addEventListener('mouseenter', updateStats);
-  film.addEventListener('click', updateStats); // for mobile tap
 });

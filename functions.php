@@ -797,49 +797,55 @@ function solace_register_menus() {
 add_action( 'init', 'solace_register_menus' );
 
 
-// Adding data functionality to all film posts (for Works page)
+// Add data attributes to Solace Film posts (used by Works page Query Loop)
+add_filter('render_block', function($block_content, $block) {
+	if (empty($block['blockName']) || $block['blockName'] !== 'core/post-template') {
+		return $block_content;
+	}
 
-add_filter( 'render_block', function( $block_content, $block ) {
+	// Parse the HTML safely
+	libxml_use_internal_errors(true);
+	$doc = new DOMDocument();
+	$doc->loadHTML('<?xml encoding="utf-8" ?>' . $block_content);
 
-    // Only target wp:post-template blocks
-    if ( $block['blockName'] === 'core/post-template' ) {
+	$lis = $doc->getElementsByTagName('li');
 
-        // Use DOMDocument to manipulate the block HTML
-        libxml_use_internal_errors(true); // avoid HTML errors
-        $doc = new DOMDocument();
-        $doc->loadHTML('<?xml encoding="utf-8" ?>' . $block_content);
+	foreach ($lis as $li) {
+		if (preg_match('/post-(\d+)/', $li->getAttribute('class'), $matches)) {
+			$post_id = intval($matches[1]);
 
-        $lis = $doc->getElementsByTagName('li');
+			// Only apply to Solace Film posts
+			if (get_post_type($post_id) !== 'solace-film') {
+				continue;
+			}
 
-        foreach ($lis as $li) {
-            // Get the post ID from the class (e.g., "post-136")
-            if (preg_match('/post-(\d+)/', $li->getAttribute('class'), $matches)) {
-                $id = $matches[1];
+			// Fetch post and ACF data
+			$title    = esc_attr(get_the_title($post_id));
+			$director = esc_attr(get_field('director', $post_id));
+			$release  = esc_attr(get_field('release_date', $post_id));
+			$release_full = get_field('release_date', $post_id);
+			$release_year = $release_full ? date('Y', strtotime($release_full)) : 'TBC';
+			
 
-                // Fetch ACF fields
-                $director = get_field('director', $id) ?: '';
-                $release = get_field('release_date', $id) ?: '';
-                $title = get_the_title($id);
-                $url = get_permalink($id);
+			$url      = esc_url(get_permalink($post_id));
 
-                // Set data attributes
-                $li->setAttribute('data-director', $director);
-                $li->setAttribute('data-release', $release);
-                $li->setAttribute('data-title', $title);
-                $li->setAttribute('data-url', $url);
-            }
-        }
+			// Assign data attributes
+			$li->setAttribute('data-title', $title ?: 'Untitled');
+			$li->setAttribute('data-director', $director ?: 'Unknown');
+			$li->setAttribute('data-release', $release_year ?: 'TBC');
+			$li->setAttribute('data-url', $url);
+		}
+	}
 
-        // Save and return modified HTML
-        $block_content = $doc->saveHTML($doc->getElementsByTagName('body')->item(0));
-        // Remove <body> wrapper
-        $block_content = preg_replace('~<(?:/?body)>~i', '', $block_content);
-    }
+	// Return cleaned HTML
+	$body = $doc->getElementsByTagName('body')->item(0);
+	$output = '';
+	foreach ($body->childNodes as $child) {
+		$output .= $doc->saveHTML($child);
+	}
+	return $output;
 
-    return $block_content;
-
-}, 10, 2 );
-
+}, 10, 2);
 
 
 // Automatically add Solace Film metadata attributes to each Query Loop item
