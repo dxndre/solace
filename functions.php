@@ -795,3 +795,90 @@ function solace_register_menus() {
     ) );
 }
 add_action( 'init', 'solace_register_menus' );
+
+
+// Adding data functionality to all film posts (for Works page)
+
+add_filter( 'render_block', function( $block_content, $block ) {
+
+    // Only target wp:post-template blocks
+    if ( $block['blockName'] === 'core/post-template' ) {
+
+        // Use DOMDocument to manipulate the block HTML
+        libxml_use_internal_errors(true); // avoid HTML errors
+        $doc = new DOMDocument();
+        $doc->loadHTML('<?xml encoding="utf-8" ?>' . $block_content);
+
+        $lis = $doc->getElementsByTagName('li');
+
+        foreach ($lis as $li) {
+            // Get the post ID from the class (e.g., "post-136")
+            if (preg_match('/post-(\d+)/', $li->getAttribute('class'), $matches)) {
+                $id = $matches[1];
+
+                // Fetch ACF fields
+                $director = get_field('director', $id) ?: '';
+                $release = get_field('release_date', $id) ?: '';
+                $title = get_the_title($id);
+                $url = get_permalink($id);
+
+                // Set data attributes
+                $li->setAttribute('data-director', $director);
+                $li->setAttribute('data-release', $release);
+                $li->setAttribute('data-title', $title);
+                $li->setAttribute('data-url', $url);
+            }
+        }
+
+        // Save and return modified HTML
+        $block_content = $doc->saveHTML($doc->getElementsByTagName('body')->item(0));
+        // Remove <body> wrapper
+        $block_content = preg_replace('~<(?:/?body)>~i', '', $block_content);
+    }
+
+    return $block_content;
+
+}, 10, 2 );
+
+
+
+// Automatically add Solace Film metadata attributes to each Query Loop item
+
+function solace_add_film_data_attributes( $block_content, $block ) {
+    // Only target the Query Loop post template items
+    if (
+        isset( $block['blockName'] ) &&
+        $block['blockName'] === 'core/post-template' &&
+        is_post_type_archive('solace-film')
+    ) {
+        // Use regex to inject attributes into each <li class="wp-block-post ...">
+        $block_content = preg_replace_callback(
+            '/<li\s+class="([^"]*wp-block-post[^"]*)"/',
+            function( $matches ) {
+                global $post;
+
+                // Get ACF fields or WP data
+                $film_title  = esc_attr( get_the_title( $post->ID ) );
+                $director    = esc_attr( get_field( 'director', $post->ID ) );
+                $release     = esc_attr( get_the_date( 'j F Y', $post->ID ) );
+                $permalink   = esc_url( get_permalink( $post->ID ) );
+
+                // Build data attributes string
+                $data_attrs = sprintf(
+                    ' class="%s" data-film-title="%s" data-director="%s" data-release="%s" data-link="%s"',
+                    $matches[1],
+                    $film_title,
+                    $director ?: 'Unknown',
+                    $release,
+                    $permalink
+                );
+
+                return '<li ' . $data_attrs;
+            },
+            $block_content
+        );
+    }
+
+    return $block_content;
+}
+add_filter( 'render_block', 'solace_add_film_data_attributes', 10, 2 );

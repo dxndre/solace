@@ -325,6 +325,176 @@ body {
 		}
 	}
 
+	&.page-template-page-works {
+		#main {
+			.hero-header {
+				height: 150px;
+
+				h1 {
+					margin: 0;
+					text-align: center;
+					margin-top: 15vh;
+				}
+			}
+
+			section {
+				&.works-section {
+					min-height: calc(100vh - 150px);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			}
+		}
+
+		.films-reel {
+			overflow-x: auto;
+			overflow-y: hidden;
+			white-space: nowrap;
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
+			gap: 1rem;
+			padding: 2rem;
+			scroll-snap-type: x mandatory;
+			-webkit-overflow-scrolling: touch;
+			justify-content: center;
+
+			// Hide the vertical scrollbar and stylise horizontal
+			&::-webkit-scrollbar {
+				height: 6px;
+			}
+			&::-webkit-scrollbar-thumb {
+				background: rgba(255, 255, 255, 0.3);
+				border-radius: 10px;
+			}
+
+			// Target Gutenberg's post list
+			.wp-block-post-template {
+				display: flex !important; /* override grid layout */
+				flex-direction: row;
+				gap: 1rem;
+				width: max-content;
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+
+			// Each film item
+			.wp-block-post {
+				flex: 0 0 auto;
+				width: clamp(120px, 8vw, 180px);
+				height: clamp(300px, 40vh, 480px);
+				position: relative;
+				overflow: hidden;
+				scroll-snap-align: start;
+				cursor: pointer;
+				transition: transform 0.3s ease, opacity 0.3s ease;
+
+				&:hover {
+					transform: scale(1.05);
+					z-index: 2;
+
+					img {
+						filter: saturate(1);
+						transition: 0.3s all ease;
+					}
+				}
+				
+				img {
+					filter: saturate(0);
+					transition: 0.7s all ease;
+				}
+
+				.wp-block-post-featured-image {
+					height: 100%;
+
+					img {
+						width: 100%;
+						height: 100%;
+						object-fit: cover;
+						display: block;
+					}
+				}
+
+				.wp-block-post-date {
+					position: absolute;
+					bottom: 0.5rem;
+					left: 0.75rem;
+					font-size: 0.8rem;
+					text-transform: uppercase;
+					background: rgba(0, 0, 0, 0.5);
+					padding: 0.25rem 0.5rem;
+					border-radius: 0.25rem;
+					color: #fff;
+				}
+			}
+
+			@media (max-width: 768px) {
+				padding: 1rem;
+				gap: 0.75rem;
+
+				.wp-block-post {
+					width: clamp(100px, 30vw, 140px);
+					height: clamp(220px, 45vh, 400px);
+				}
+			}
+		}
+
+		.project-data-bar {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			background: #000;
+			color: #fff;
+			padding: 1rem 2rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: transform 0.3s ease; 
+			z-index: 1000;
+
+			.project-data-inner {
+				display: flex;
+				align-items: center;
+				gap: 2rem;
+				width: 100%;
+				justify-content: space-between;
+				max-width: 1200px;
+			}
+
+			.view-project-btn,
+			.full-project-link {
+				background: transparent;
+				border: 1px solid #fff;
+				padding: 0.5rem 1.25rem;
+				color: #fff;
+				text-decoration: none;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				font-weight: 600;
+				transition: background 0.3s ease;
+
+				&:hover {
+				background: #fff;
+				color: #000;
+				}
+			}
+
+			.film-info {
+				display: flex;
+				flex-direction: row;
+				gap: 1rem;
+
+				span {
+				display: block;
+				}
+			}
+			}
+
+	}
+
 	&.single-solace-film {
 		#main {
 			max-width: 100%;
@@ -697,6 +867,7 @@ body {
 			overflow-y: auto;
 			height: 100vh;
 			scroll-behavior: smooth;
+			justify-content: center;
 
 			.wp-block-cover {
 				scroll-snap-align: start;      /* snap each block to top */

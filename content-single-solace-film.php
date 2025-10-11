@@ -9,7 +9,7 @@
 $video_preview = get_field('video_preview');
 $image_preview = get_field('image_preview');
 $film_type     = get_field('film_type');
-$release_year  = get_field('release_year');
+$release_date  = get_field('release_date');
 $producer      = get_field('producer');
 $director      = get_field('director');
 ?>
@@ -27,10 +27,10 @@ $director      = get_field('director');
         <div class="film-details">
             <h1 class="entry-title"><?php the_title(); ?></h1>
 			<div class="little-details">
-				<?php if ( $release_year ) : ?>
-					<span class="release-year"><?php echo esc_html($release_year); ?></span>
+				<?php if ( $release_date ) : ?>
+					<span class="release-year"><?php echo esc_html($release_date); ?></span>
 				<?php endif; ?>
-				<?php if ( $film_type && $release_year ) : ?>
+				<?php if ( $film_type && $release_date ) : ?>
 					<span class="separator">|</span>
 				<?php endif; ?>
 					<span class="film-type"><?php echo esc_html($film_type); ?></span>		
