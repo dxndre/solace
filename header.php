@@ -89,7 +89,9 @@
 
 				<!-- Mobile Menu Toggle -->
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle navigation', 'solace-digital' ); ?>">
-					<span class="navbar-toggler-icon"></span>
+					<span class="line"></span>
+					<span class="line"></span>
+					<span class="line"></span>
 				</button>
 
 				<!-- Mobile Menu -->
