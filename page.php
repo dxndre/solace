@@ -22,7 +22,7 @@ the_post();
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-8 order-md-2 col-sm-12">
+		<div class="col-md-12 order-md-2 col-sm-12">
 			<div id="post-<?php the_ID(); ?>" <?php post_class( 'content' ); ?>>
 				<?php
 					the_content();

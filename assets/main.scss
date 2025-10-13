@@ -1137,10 +1137,22 @@ body {
 				.inner-form {
 					display: flex;
 					gap: 16px;
+					flex-direction: column;
+
+					@include media-breakpoint-up(md) {
+						flex-direction: row;
+					}
 
 					input,
 					select,
 					textarea {
+						font-size: 12px;
+						width: 100%;
+
+						@include media-breakpoint-up(md) {
+							font-size: 16px;
+						}
+
 						&:focus,
 						&:focus-visible,
 						&:focus-within {
@@ -1155,17 +1167,22 @@ body {
 
 					input,
 					select {
-						padding: 16px;
+						padding: 12px;
 						padding-left: 0;
 						background-color: transparent;
 						color: white;
 						border: none;
 						border-bottom: 1px solid white;
-						margin-bottom: 1em;
+						margin-bottom: 6px;
 
 						&::placeholder {
 							color: white;
 							font-weight: lighter;
+						}
+
+						@include media-breakpoint-up(md) {
+							padding: 16px 0;
+							margin-bottom: 1em;
 						}
 					}
 
