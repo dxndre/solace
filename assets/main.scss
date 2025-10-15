@@ -521,14 +521,20 @@ body {
 			section {
 				&.content-section {
 					margin-top: -20vh;
+					padding: 0 12px;
+
+					@include media-breakpoint-up(md) {
+						padding: 0;
+					}
 
 					h2 {
+						font-family: "JetBrains Mono", monospace;
 						margin-top: 3em;
 						margin-bottom: 1em;
 					}
 
 					.text-block {
-						font-family: "Inter", sans-serif;
+						font-family: "JetBrains Mono", monospace;
 						width: 100%;
 						max-width: 700px;
 						margin-bottom: 2em;
@@ -581,6 +587,11 @@ body {
 					.stats {
 						max-width: 700px;
 						margin: 0 auto;
+						gap: 12px;
+
+						@include media-breakpoint-up(md) {
+							gap: 2em;
+						}
 
 						.wp-block-column {
 							text-align: center;
@@ -588,11 +599,15 @@ body {
 
 						pre {
 							font-family: "JetBrains Mono", monospace;
-							font-size: 3em;
+							font-size: 2em;
 							font-weight: 600;
 							line-height: 1.5;
-							white-space: pre-wrap; // Allow wrapping
-							word-break: break-word; // Break long words if necessary
+							white-space: pre-wrap;
+							word-break: break-word;
+
+							@include media-breakpoint-up(md) {
+								font-size: 3em;
+							}
 						}
 					}
 				}
@@ -601,6 +616,11 @@ body {
 					margin: 3em 0;
 					position: relative;
 					z-index: 2;
+					text-align: center;
+
+					@include media-breakpoint-up(md) {
+						text-align: left;
+					}
 
 					.role {
 						text-transform: uppercase;
@@ -638,8 +658,14 @@ body {
 
 			h1 {
 				font-family: "JetBrains Mono", monospace;
-				font-size: 3em;
+				font-size: 2em;
 				font-weight: bolder;
+				text-align: center;
+
+				@include media-breakpoint-up(md) {
+					font-size: 3em;
+					text-align: left;
+				}
 			}
 
 			.film-hero-video,
@@ -663,8 +689,16 @@ body {
 				.little-details {
 					display: flex;
 					flex-direction: row;
-					gap: 12px;
+					gap: 6px;
 					text-transform: uppercase;
+					font-size: 12px;
+					justify-content: center;
+
+					@include media-breakpoint-up(md) {
+						gap: 12px;
+						font-size: 16px;
+						justify-content: left;
+					}
 				}
 			}
 			
@@ -677,13 +711,23 @@ body {
 
 			.film-meta-columns {
 				display: flex;
-				gap: 2rem;
+				gap: 0rem;
 				flex-wrap: wrap;
 				list-style: none;
 				padding: 0;
 				margin: 0;
 				width: 100%;
 				max-width: 400px;
+				text-align: center;
+
+				@include media-breakpoint-up(sm) {
+					gap: 1rem;
+					text-align: left;
+				}
+
+				@include media-breakpoint-up(md) {
+					gap: 2rem;
+				}
 
 				li {
 					flex: 1 1 150px;
@@ -693,11 +737,20 @@ body {
 					text-transform: uppercase;
 					font-weight: bolder;
 					margin-bottom: 0.25rem;
-					font-size: 1.25em;
+					font-size: 1em;
+
+					@include media-breakpoint-up(md) {
+						font-size: 1.25em;
+					}
 				}
 
 				.meta-value {
 					font-weight: lighter;
+					font-size: 12px;
+
+					@include media-breakpoint-up(md) {
+						font-size: 14px;
+					}
 				}
 			}
 		}
@@ -1595,13 +1648,17 @@ img {
 		position: fixed;
 		top: 0;
 		left: 0;
-		width: 20%;
+		width: 10%;
 		height: 100vh;
 		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(#000000));
 		background-image: linear-gradient(90deg, rgb(0 0 0), #00000000);
 		opacity: 1;
 		pointer-events: none;
 		z-index: 1;
+
+		@include media-breakpoint-up(md) {
+			width: 20%;
+		}
 	}
 
 	&::after {
@@ -1609,13 +1666,17 @@ img {
 		position: fixed;
 		top: 0;
 		right: 0;
-		width: 20%;
+		width: 10%;
 		height: 100vh;
 		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(#000000));
 		background-image: linear-gradient(270deg, rgb(0 0 0), #00000000);
 		opacity: 1;
 		pointer-events: none;
 		z-index: 1;
+
+		@include media-breakpoint-up(md) {
+			width: 20%;
+		}
 	}
 }
 
