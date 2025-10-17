@@ -1590,7 +1590,7 @@ img {
 		&.show {
 			left: 0;
 			background: rgba(0, 0, 0, 0.75);
-			backdrop-filter: blur(5px);
+			backdrop-filter: blur(3px);
 			transition: 0.3s all ease;
 		}
 
