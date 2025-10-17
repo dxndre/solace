@@ -28,8 +28,7 @@
 					<div class="col-md-2 offset-md-4 socials-container">
 						<ul class="socials">
 							<li><a href="https://www.instagram.com/solaceefilms"><i class="fa-brands fa-instagram"></i></a></li>
-							<li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
-							<li><a href="#"><i class="fa-brands fa-youtube"></i></a></li>
+							<li><a href="#"><i class="fa-brands fa-linkedin"></i></a></li>
 						</ul>
 					</div>
 

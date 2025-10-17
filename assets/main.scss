@@ -208,6 +208,11 @@ $link-decoration: none;
 	h1 {
 		position: relative;
 		z-index: 1;
+		padding: 0 12px;
+
+		@include media-breakpoint-up(md) {
+			padding: 0;
+		}
 	}
 }
 
@@ -1452,7 +1457,7 @@ img {
 		// border-top: 5px solid white;
 		background: transparent;
 		padding: 5px 0;
-		backdrop-filter: blur(0px);
+		// backdrop-filter: blur(0px);
 		transition: 0.3s all ease;
 		display: flex;
 		align-items: center;
@@ -1530,7 +1535,7 @@ img {
 
 		&.scrolled {
 			// background-image: linear-gradient(0deg, rgba(0, 0, 0, 0), #000000);
-			backdrop-filter: blur(1px);
+			// backdrop-filter: blur(1px);
 			transition: 0.3s all ease;
 
 			&::after {
@@ -1572,17 +1577,20 @@ img {
 		display: flex;
 		height: 100vh;
 		color: white;
-		background: black;
+		background: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0px);
 		position: fixed;
 		top: 0;
 		width: 100%;
 		left: 100%;
 		align-items: center;
 		justify-content: center;
-		transition: 0.3s all ease;
+		transition: 0.5s all ease;
 
 		&.show {
 			left: 0;
+			background: rgba(0, 0, 0, 0.75);
+			backdrop-filter: blur(5px);
 			transition: 0.3s all ease;
 		}
 

@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const btn = document.createElement('a');
                 btn.href = '#'; // blank link for now
-                btn.textContent = '[Open Project]';
+                btn.textContent = '[View Project]';
                 btn.classList.add('open-project-btn');
                 li.appendChild(btn);
             }
@@ -435,4 +435,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const link = film.querySelector('a');
     if (link) film.setAttribute('data-url', link.href);
   });
+});
+
+
+// Disabling scrolling when the mobile menu is open 
+
+document.addEventListener('DOMContentLoaded', function () {
+  const mobileNav = document.getElementById('mobileNav');
+
+  const toggleBodyScroll = () => {
+    if (mobileNav.classList.contains('show')) {
+      document.body.style.overflow = 'hidden'; // disable scroll
+    } else {
+      document.body.style.overflow = ''; // re-enable scroll
+    }
+  };
+
+  // Run on load in case it's already open
+  toggleBodyScroll();
+
+  // Observe changes to the class
+  const observer = new MutationObserver(toggleBodyScroll);
+  observer.observe(mobileNav, { attributes: true, attributeFilter: ['class'] });
 });
