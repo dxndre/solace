@@ -84,35 +84,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update menu active state
     function updateMenu() {
-        const viewportCenter = reel.scrollTop + reel.clientHeight / 2;
-        let currentSectionId = null;
+      const viewportCenter = reel.scrollTop + reel.clientHeight / 2;
+      let currentSectionId = null;
 
-        sections.forEach(section => {
-            const top = section.offsetTop;
-            const bottom = top + section.offsetHeight;
-            if (viewportCenter >= top && viewportCenter < bottom) {
-                currentSectionId = section.id;
-            }
-        });
+      sections.forEach(section => {
+          const top = section.offsetTop;
+          const bottom = top + section.offsetHeight;
+          if (viewportCenter >= top && viewportCenter < bottom) {
+              currentSectionId = section.id;
+          }
+      });
 
-        menuLinks.forEach(link => {
-            const li = link.parentElement;
-            const targetId = link.getAttribute('href').replace('#', '');
+      menuLinks.forEach(link => {
+          const li = link.parentElement;
+          const targetId = link.getAttribute('href').replace('#', '');
 
-            li.classList.remove('active');
-            const oldBtn = li.querySelector('.open-project-btn');
-            if (oldBtn) oldBtn.remove();
+          li.classList.remove('active');
+          const oldBtn = li.querySelector('.open-project-btn');
+          if (oldBtn) oldBtn.remove(); // optional, in case old ones still exist
 
-            if (targetId === currentSectionId) {
-                li.classList.add('active');
-
-                const btn = document.createElement('a');
-                btn.href = '#'; // blank link for now
-                btn.textContent = '[View Project]';
-                btn.classList.add('open-project-btn');
-                li.appendChild(btn);
-            }
-        });
+          if (targetId === currentSectionId) {
+              li.classList.add('active');
+              // no button creation anymore
+          }
+      });
     }
 
     // Smooth scroll for menu links
