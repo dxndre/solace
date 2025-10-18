@@ -9,16 +9,13 @@ get_header();
 
 the_post();
 ?>
-<div class="hero-header">
+<div class="hero-header" 
+     style="background-image: url('<?php echo esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ); ?>');">
 	<div class="container">
-		<?php
-			if ( has_post_thumbnail() ) {
-				the_post_thumbnail( 'full', array( 'class' => 'img-fluid' ) );
-			}
-		?>
 		<h1 class="entry-title"><?php the_title(); ?></h1>
 	</div>
 </div>
+
 
 <div class="container">
 	<div class="row">

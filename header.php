@@ -112,13 +112,33 @@
 
 	</header>
 
-	<main id="main" class=""<?php 
-    if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) :
-        echo ' style="padding-top: 0px;"';
-    elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) :
-        echo ' style="padding-bottom: 100px;"';
-    endif; 
-?>>
+	<?php 
+		// Get the ACF background image
+		$background_image = get_field('background_image');
+
+		$style_attr = '';
+		$main_classes = '';
+
+		// Add padding based on navbar position
+		if ( isset( $navbar_position ) && 'fixed_top' === $navbar_position ) {
+			$style_attr .= 'padding-top: 0px;';
+		} elseif ( isset( $navbar_position ) && 'fixed_bottom' === $navbar_position ) {
+			$style_attr .= 'padding-bottom: 100px;';
+		}
+
+		// Add the background image if it exists
+		if ( $background_image ) {
+			$style_attr .= 'background-image: url(' . esc_url( $background_image['url'] ) . ');';
+			$style_attr .= 'background-size: cover;';
+			$style_attr .= 'background-position: center;';
+			$style_attr .= 'background-repeat: no-repeat;';
+
+			// Add class when background image is applied
+			$main_classes .= ' has-background-image';
+		}
+		?>
+
+		<main id="main" class="<?php echo esc_attr( $main_classes ); ?>" style="<?php echo esc_attr( $style_attr ); ?>">
 
 <?php
 // Only wrap row/column if NOT a Film post

@@ -453,3 +453,76 @@ document.addEventListener('DOMContentLoaded', function () {
   const observer = new MutationObserver(toggleBodyScroll);
   observer.observe(mobileNav, { attributes: true, attributeFilter: ['class'] });
 });
+
+
+// Auto-scroll up to the top of the page when not on footer
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Only run on the homepage
+  if (!document.body.classList.contains('home')) return;
+
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  let isScrollingToTop = false;
+
+  main.addEventListener('wheel', function (e) {
+    // Trigger only when scrolling upward
+    if (e.deltaY < -30 && !isScrollingToTop) {
+      isScrollingToTop = true;
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // ✅ smooth scroll
+      });
+
+      // Cooldown to avoid multiple triggers in one gesture
+      setTimeout(() => {
+        isScrollingToTop = false;
+      }, 1000);
+    }
+  });
+});
+
+
+// Resume all videos on resize
+
+document.addEventListener('DOMContentLoaded', function () {
+  const videos = document.querySelectorAll('.wp-block-cover__video-background');
+
+  // Function to resume all videos
+  function resumeVideos() {
+    videos.forEach(video => {
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+    });
+  }
+
+  // Listen for resize (debounced to prevent spam)
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resumeVideos, 250); // small delay for stability
+  });
+});
+
+
+// Parallax Effect for pages with background images
+
+let latestScroll = 0;
+let ticking = false;
+
+window.addEventListener('scroll', function() {
+	latestScroll = window.pageYOffset;
+	if (!ticking) {
+		window.requestAnimationFrame(function() {
+			const main = document.querySelector('#main.has-background-image');
+			if (main) {
+				main.style.backgroundPositionY = -(latestScroll * 0.2) + 'px';
+			}
+			ticking = false;
+		});
+		ticking = true;
+	}
+});

@@ -199,16 +199,25 @@ $link-decoration: none;
 	height: 200px;
 	display: flex;
 	align-items: flex-end;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	padding-bottom: 3em;
 
 	@include media-breakpoint-up(md) {
 		height: 300px;
 		align-items: flex-end;
 	}
 
+	@include media-breakpoint-up(lg) {
+		height: 400px;
+	}
+
 	h1 {
 		position: relative;
 		z-index: 1;
 		padding: 0 12px;
+		text-align: center;
 
 		@include media-breakpoint-up(md) {
 			padding: 0;
@@ -276,10 +285,23 @@ body {
 							}
 						}
 
-						@keyframes fadeOutDown {
+						@keyframes fadeOut {
 							to {
 								opacity: 0;
 								transform: translateY(10px);
+							}
+						}
+
+						@keyframes fadeOutDown {
+							to {
+								opacity: 0.05;
+								transform: scale(2);
+							}
+						}
+
+						@keyframes shiftUp {
+							to {
+								transform: translateY(-50px);
 							}
 						}
 
@@ -314,10 +336,15 @@ body {
 							text-transform: uppercase;
 							padding-left: 0;
 							font-weight: 300;
+							font-size: 14px;
 							transition: 0.7s all ease;
 
 							&.open-project-btn {
 								color: rgba(255, 255, 255, 0.5);
+							}
+
+							@include media-breakpoint-up(lg) {
+								font-size: 16px;
 							}
 						}
 
@@ -1099,7 +1126,7 @@ body {
 						}
 
 						p {
-							animation: fadeOutDown 0.6s forwards;
+							animation: fadeOut 0.6s forwards;
 							animation-delay: 3s;
 							pointer-events: none;
 						}
@@ -1308,6 +1335,7 @@ body {
 					input,
 					select,
 					textarea {
+						color: white;
 						font-size: 12px;
 						width: 100%;
 
@@ -1385,6 +1413,50 @@ body {
 						border: 1px solid white;
 						transition: 0.15s all ease;
 					}
+				}
+			}
+		}
+
+		&.contact-details-section {
+			padding: 3em 0;
+			text-align: center;
+
+			h2 {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 1.25em;
+				text-transform: uppercase;
+				margin: 0;
+			}
+
+			p {
+				margin: 10px 0;
+				margin-top: 5px;
+			}
+
+			a {
+				color: white;
+				text-decoration: none;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.75);
+				transition: 0.3s all ease;
+
+				&:hover {
+					color: red;
+					border-bottom: 1px solid red;
+					transition: 0.3s all ease;
+				}
+			}
+
+			.contact-table {
+				width: 100%;
+				max-width: 750px;
+				margin: 2em auto;
+				position: relative;
+				z-index: 1;
+
+				.wp-block-column {
+					color: white;
+					padding: 2em;
+					border: 1px solid rgba(255, 255, 255, 0.125);
 				}
 			}
 		}
@@ -1803,6 +1875,33 @@ img {
 
 		@include media-breakpoint-up(md) {
 			width: 20%;
+		}
+	}
+
+	> .container {
+		&::after {
+			content: "";
+			display: block; 
+			position: fixed;
+			width: 100%;
+			height: 100vh;
+			top: 0;
+			left: 0;
+			z-index: 0;
+			backdrop-filter: brightness(0.55) saturate(2);
+		}
+	}
+
+	&.has-background-image {
+		background-attachment: scroll;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		transition: background-position 0.5s ease-in-out;
+
+		&::before,
+		&::after {
+			display: none;
 		}
 	}
 }
