@@ -526,3 +526,24 @@ window.addEventListener('scroll', function() {
 		ticking = true;
 	}
 });
+
+
+// Adding "Selected" class to work items on click
+
+// Select all the film list items
+const filmItems = document.querySelectorAll('.films-reel .wp-block-post');
+
+filmItems.forEach(item => {
+	// Function to handle selection
+	const selectItem = () => {
+		// Remove 'selected' from all items
+		filmItems.forEach(i => i.classList.remove('selected'));
+
+		// Add 'selected' to the current item
+		item.classList.add('selected');
+	};
+
+	// Add click and touch event listeners
+	item.addEventListener('click', selectItem);
+	item.addEventListener('touchstart', selectItem);
+});

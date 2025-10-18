@@ -214,6 +214,7 @@ $link-decoration: none;
 	}
 
 	h1 {
+		font-family: "JetBrains Mono", monospace;
 		position: relative;
 		z-index: 1;
 		padding: 0 12px;
@@ -416,17 +417,30 @@ body {
 
 	&.page-template-page-works {
 		#main {
-			.hero-header {
-				height: 125px;
+			// .hero-header {
+			// 	height: 125px;
 
-				@include media-breakpoint-up(md) {
-					height: 200px;
+			// 	@include media-breakpoint-up(md) {
+			// 		height: 200px;
+			// 	}
+
+			// 	h1 {
+			// 		margin: 0;
+			// 		text-align: center;
+			// 		margin-top: 15vh;
+			// 	}
+			// }
+
+			&.has-background-image {
+				&::before,
+				&::after {
+					display: block;
 				}
+			}
 
-				h1 {
-					margin: 0;
-					text-align: center;
-					margin-top: 15vh;
+			& > .container {
+				::after {
+					backdrop-filter: brightness(0.5) saturate(0);
 				}
 			}
 
@@ -441,7 +455,7 @@ body {
 
 					@include media-breakpoint-up(md) {
 						align-items: center;
-						min-height: calc(100vh - 200px);
+						min-height: calc(100vh - 500px);
 					}
 				}
 			}
@@ -480,7 +494,6 @@ body {
 				margin: 0;
 			}
 
-			// Each film item
 			.wp-block-post {
 				flex: 0 0 auto;
 				width: clamp(120px, 8vw, 180px);
@@ -489,31 +502,36 @@ body {
 				overflow: hidden;
 				scroll-snap-align: start;
 				cursor: pointer;
-				transition: transform 0.3s ease, opacity 0.3s ease;
+
+				// Smooth transitions for all animatable properties
+				transition: 
+					width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+					transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+					z-index 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
 				&:hover {
 					transform: scale(1.05);
 					z-index: 2;
 
 					img {
-						filter: saturate(1);
-						transition: 0.3s all ease;
+					filter: saturate(1);
+						transition: filter 0.3s ease;
 					}
 				}
-				
+
 				img {
 					filter: saturate(0);
-					transition: 0.7s all ease;
+					transition: filter 0.7s ease; // ensures saturation animates smoothly
 				}
 
 				.wp-block-post-featured-image {
 					height: 100%;
 
 					img {
-						width: 100%;
-						height: 100%;
-						object-fit: cover;
-						display: block;
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					display: block;
 					}
 				}
 
@@ -528,7 +546,27 @@ body {
 					border-radius: 0.25rem;
 					color: #fff;
 				}
+
+				// Selected state
+				&.selected {
+					width: 300px; // scales up smoothly
+					// transform: scale(1.05); 
+					z-index: 2; // ensures it appears above neighbors
+
+					@include media-breakpoint-up(md) {
+						width: 500px;
+					}
+
+					@include media-breakpoint-up(xl) {
+						width: 700px;
+					}
+
+					img {
+						filter: saturate(1);
+					}
+				}
 			}
+
 
 			@media (max-width: 768px) {
 				padding: 1rem;
@@ -1895,7 +1933,7 @@ img {
 	&.has-background-image {
 		background-attachment: scroll;
 		background-size: cover;
-		background-position: center;
+		background-position: top;
 		background-repeat: no-repeat;
 		transition: background-position 0.5s ease-in-out;
 
