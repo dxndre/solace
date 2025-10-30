@@ -547,3 +547,101 @@ filmItems.forEach(item => {
 	item.addEventListener('click', selectItem);
 	item.addEventListener('touchstart', selectItem);
 });
+
+
+// Live count-up effect for stats numbers 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const statSection = document.querySelector('.stats');
+  if (!statSection) return;
+
+  const counters = statSection.querySelectorAll('.project-unit');
+  let hasCounted = false;
+
+  // Function to animate numbers
+  function countUp(el, target, hasPlus) {
+    const duration = 2000; // total time for animation
+    const startTime = performance.now();
+
+    function update(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const value = Math.floor(progress * target);
+      el.textContent = value + (hasPlus ? '+' : '');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  // Start the count for all counters
+  function startCounting() {
+    counters.forEach(el => {
+      const text = el.dataset.originalValue || el.textContent.trim();
+      const hasPlus = text.includes('+');
+      const target = parseInt(text.replace(/\D/g, ''), 10);
+      el.dataset.originalValue = text;
+      el.textContent = '0';
+      countUp(el, target, hasPlus);
+    });
+  }
+
+  // Reset counters to 0 (for when the section leaves view)
+  function resetCounters() {
+    counters.forEach(el => {
+      el.textContent = '0';
+    });
+    hasCounted = false;
+    statSection.classList.remove('visible');
+  }
+
+  // Scroll event handler
+  function handleScroll() {
+    const rect = statSection.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+    const completelyOutOfView = rect.bottom <= 0 || rect.top >= window.innerHeight;
+
+    if (inView && !hasCounted) {
+      startCounting();
+      statSection.classList.add('visible');
+      hasCounted = true;
+    }
+
+    if (completelyOutOfView && hasCounted) {
+      resetCounters(); // ✅ re-enable replay after it leaves the screen
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll);
+  handleScroll();
+});
+
+
+// Showreel carousel functionality
+document.addEventListener("DOMContentLoaded", function() {
+  const carousel = document.querySelector('.showreel-carousel');
+  if (!carousel) return;
+
+  let scrollSpeed = 0.3; // pixels per frame
+  let isHovered = false;
+
+  carousel.classList.add('auto-scrolling');
+
+  carousel.addEventListener('mouseenter', () => isHovered = true);
+  carousel.addEventListener('mouseleave', () => isHovered = false);
+
+  function autoScroll() {
+    if (!isHovered) {
+      carousel.scrollLeft += scrollSpeed;
+
+      // Loop back to start
+      if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
+        carousel.scrollLeft = 0;
+      }
+    }
+
+    requestAnimationFrame(autoScroll);
+  }
+
+  autoScroll();
+});
