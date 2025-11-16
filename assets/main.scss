@@ -701,7 +701,8 @@ body {
 					.showreel-carousel {
 						display: flex;
 						flex-wrap: nowrap;
-						overflow-x: auto;
+						// overflow-x: auto;
+						overflow-x: hidden;
 						overflow-y: hidden;
 						gap: 1rem;
 						padding-bottom: 1rem;
@@ -709,7 +710,7 @@ body {
 						scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
 						position: relative;
 						width: 100vw;
-						left: -10vw;
+						left: -12.5vw;
 
 						&.auto-scrolling {
 							scroll-snap-type: none; // disables snapping during auto-scroll
@@ -933,6 +934,95 @@ body {
 						font-size: 14px;
 					}
 				}
+			}
+		}
+
+		.showreel-carousel {
+			display: flex;
+			gap: 1rem;
+			overflow-x: auto;
+			scroll-behavior: smooth;
+			padding: 2rem 0;
+
+			// Hide scrollbar
+			&::-webkit-scrollbar {
+				display: none;
+			}
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+
+			// Images from CMS
+			img {
+				display: block;
+				height: 260px;
+				width: auto;
+				border-radius: 8px;
+				cursor: pointer;
+				flex-shrink: 0;
+				object-fit: cover;
+
+				transition: transform 0.2s ease;
+				&:hover {
+				transform: scale(1.03);
+				}
+			}
+			}
+
+			// Fullscreen overlay viewer
+			.image-overlay {
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.85);
+			display: none;
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;
+			padding: 2rem;
+
+			&.active {
+				display: flex;
+			}
+
+			img {
+				max-width: 90vw;
+				max-height: 90vh;
+				border-radius: 6px;
+				box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+			}
+
+			&__close {
+				position: absolute;
+				top: 2rem;
+				right: 2rem;
+				font-size: 2rem;
+				color: white;
+				cursor: pointer;
+				user-select: none;
+			}
+		}
+
+		.lightbox {
+			position: fixed;
+			inset: 0;
+			background: rgba(0,0,0,0.85);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.25s ease;
+			z-index: 9999;
+
+			&.visible {
+				opacity: 1;
+				pointer-events: all;
+			}
+
+			img {
+				max-width: 90%;
+				max-height: 90%;
+				border-radius: 8px;
+				box-shadow: 0 0 25px rgba(0,0,0,0.4);
 			}
 		}
 	}

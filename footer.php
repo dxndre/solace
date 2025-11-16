@@ -71,6 +71,14 @@
 			</div><!-- /.container -->
 		</footer><!-- /#footer -->
 	</div><!-- /#wrapper -->
+
+	<div id="showreel-lightbox" class="lightbox">
+		<span class="lightbox-close">&times;</span>
+		<img class="lightbox-img" src="" alt="">
+		<span class="lightbox-prev">&#10094;</span>
+		<span class="lightbox-next">&#10095;</span>
+	</div>
+
 	<?php
 		wp_footer();
 	?>

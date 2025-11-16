@@ -617,31 +617,90 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Showreel carousel functionality
-document.addEventListener("DOMContentLoaded", function() {
+// Showreel Carousel Auto-Scroll + NEW Dynamic Lightbox
+
+document.addEventListener("DOMContentLoaded", function () {
+
   const carousel = document.querySelector('.showreel-carousel');
   if (!carousel) return;
 
-  let scrollSpeed = 0.3; // pixels per frame
+  /* -------------------------------
+     AUTO SCROLL
+  --------------------------------*/
+  let scrollSpeed = 0.3;
   let isHovered = false;
+  let isLightboxOpen = false;
 
-  carousel.classList.add('auto-scrolling');
+  carousel.addEventListener("mouseenter", () => {
+    if (!isLightboxOpen) isHovered = true;
+  });
 
-  carousel.addEventListener('mouseenter', () => isHovered = true);
-  carousel.addEventListener('mouseleave', () => isHovered = false);
+  carousel.addEventListener("mouseleave", () => {
+    if (!isLightboxOpen) isHovered = false;
+  });
 
   function autoScroll() {
-    if (!isHovered) {
+    if (!isHovered && !isLightboxOpen) {
       carousel.scrollLeft += scrollSpeed;
 
-      // Loop back to start
       if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
         carousel.scrollLeft = 0;
       }
     }
-
     requestAnimationFrame(autoScroll);
   }
-
   autoScroll();
+
+
+  /* -------------------------------
+     CREATE LIGHTBOX ONLY ONCE
+  --------------------------------*/
+  const lightbox = document.createElement("div");
+  lightbox.className = "lightbox";
+  document.body.appendChild(lightbox);
+
+
+  /* -------------------------------
+     OPEN LIGHTBOX ON IMAGE CLICK
+  --------------------------------*/
+  const galleryImages = carousel.querySelectorAll("img");
+
+  galleryImages.forEach(img => {
+    img.addEventListener("click", () => {
+      isLightboxOpen = true;
+      isHovered = true; // pause scroll
+
+      // Clear previous content
+      lightbox.innerHTML = "";
+
+      // Create image element dynamically
+      const bigImg = document.createElement("img");
+      bigImg.src = img.src;
+      bigImg.alt = img.alt || "";
+
+      // Append to lightbox
+      lightbox.appendChild(bigImg);
+
+      // Show lightbox
+      lightbox.classList.add("visible");
+
+      // Disable body scroll
+      document.body.style.overflow = "hidden";
+    });
+  });
+
+
+  /* -------------------------------
+     CLOSE LIGHTBOX ON CLICK OUTSIDE
+  --------------------------------*/
+  lightbox.addEventListener("click", (e) => {
+    // Only close if they clicked OUTSIDE the inserted image
+    if (e.target === lightbox) {
+      lightbox.classList.remove("visible");
+      isLightboxOpen = false;
+      isHovered = false;
+      document.body.style.overflow = "";
+    }
+  });
+
 });
