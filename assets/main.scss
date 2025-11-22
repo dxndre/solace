@@ -245,87 +245,126 @@ body {
 		#main {
 			max-width: 100%;
 
-			section {
-				&.mosaic-section {
-					padding: 0;
-					margin: 0;
+			section.mosaic-section {
+				padding: 0;
+				margin: 0;
 
-					@include media-breakpoint-up(md) {
-						padding: 0;
-						margin: 0;
-					}
+				.mosaic-columns {
+					display: grid;
+					grid-template-columns: repeat(3, 1fr); // 3 columns, adjust to 4 if needed
+					gap: 8px;
 
-					.mosaic-columns {
-						gap: 8px;
-					}
+					.wp-block-post {
+						overflow: hidden;
 
-					.film-tile {
-						position: relative; // key to make overlay work
-						padding: 0 !important;
+						.film-tile {
+							position: relative;
+							padding: 0 !important;
+							margin: 4px 0;
 
-						figure {
-							margin: 0;
+							figure {
+								margin: 0;
 
-							a {
-								display: block;
-								height: 200px;
-
-								@include media-breakpoint-up(md) {
-									height: 500px;
-								}
-
-								img {
-									height: 100%;
-									width: 100%;
-									object-fit: cover;
-									display: block;
-								}
-							}
-						}
-
-						.film-overlay {
-							position: absolute;
-							inset: 0;
-							background: rgba(0, 0, 0, 0.6); // optional for visibility
-							color: white; // optional
-							opacity: 0;
-							transition: opacity .3s ease;
-							padding: 20px;
-							text-align: center;
-							display: flex;
-							flex-direction: column;
-							justify-content: center;
-							align-items: center;
-
-							.tile-title {
-								font-family: "JetBrains Mono", monospace;
-								margin-bottom: 12px;
-								opacity: 0;
-								transform: translateY(25px);
-								transition: 0.3s all ease;
-								
 								a {
-									color: white;
+									display: block;
+									height: 200px;
+
+									@include media-breakpoint-up(md) {
+										height: 500px;
+									}
+
+									img,
+									video {
+										width: 100%;
+										height: 100%;
+										object-fit: cover;
+										display: block;
+									}
+								}
+
+								.video-preview {
+									width: 100%;
+									height: 100%;
+
+									video {
+										width: 100%;
+										height: 100%;
+										display: block;
+									}
 								}
 							}
-						}
 
-						&:hover {
 							.film-overlay {
-								opacity: 1;
+								position: absolute;
+								inset: 0;
+								background: rgba(0, 0, 0, 0.6);
+								color: white;
+								opacity: 0;
+								transition: opacity 0.3s ease;
+								padding: 20px;
+								display: flex;
+								flex-direction: column;
+								justify-content: center;
+								align-items: center;
 
-								.tile-title {
+								.tile-title,
+								.film-meta {
+									font-family: "JetBrains Mono", monospace;
+									margin-bottom: 12px;
+									opacity: 0;
+									transform: translateY(25px);
+									transition: all 0.3s ease;
+
+									a {
+										color: white;
+									}
+								}
+							}
+
+							&:hover {
+								.film-overlay {
 									opacity: 1;
-									transform: translateY(0);
-									transition: 0.3s all ease
+
+									.tile-title,
+									.film-meta {
+										opacity: 1;
+										transform: translateY(0);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
+
+			// Oscillating animation classes
+			.oscillating-column {
+				display: flex;
+				flex-direction: column;
+
+				&.scroll-up {
+					animation: scrollUp 60s linear infinite;
+				}
+
+				&.scroll-down {
+					animation: scrollDown 60s linear infinite;
+				}
+			}
 		}
 	}
+
+	// Keyframes
+	@keyframes scrollUp {
+		0% { transform: translateY(0); }
+		100% { transform: translateY(-50%); }
+	}
+
+	@keyframes scrollDown {
+		0% { transform: translateY(-50%); }
+		100% { transform: translateY(0); }
+	}
+
+
 
 	&.page-template-page-works {
 		aside {

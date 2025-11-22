@@ -1,692 +1,224 @@
 <?php
-
 /**
- * Include Theme Customizer.
- *
- * @since v1.0
+ * Theme setup and custom functionality for Solace Digital
  */
+
+// Include Theme Customizer
 $theme_customizer = __DIR__ . '/inc/customizer.php';
-if ( is_readable( $theme_customizer ) ) {
-	require_once $theme_customizer;
+if (is_readable($theme_customizer)) {
+    require_once $theme_customizer;
 }
 
-if ( ! function_exists( 'solace_digital_setup_theme' ) ) {
-	/**
-	 * General Theme Settings.
-	 *
-	 * @since v1.0
-	 *
-	 * @return void
-	 */
-	function solace_digital_setup_theme() {
-		// Make theme available for translation: Translations can be filed in the /languages/ directory.
-		load_theme_textdomain( 'solace-digital', __DIR__ . '/languages' );
+if (!function_exists('solace_digital_setup_theme')) {
+    function solace_digital_setup_theme() {
+        load_theme_textdomain('solace-digital', __DIR__ . '/languages');
 
-		/**
-		 * Set the content width based on the theme's design and stylesheet.
-		 *
-		 * @since v1.0
-		 */
-		global $content_width;
-		if ( ! isset( $content_width ) ) {
-			$content_width = 800;
-		}
+        global $content_width;
+        if (!isset($content_width)) {
+            $content_width = 800;
+        }
 
-		// Theme Support.
-		add_theme_support( 'title-tag' );
-		add_theme_support( 'automatic-feed-links' );
-		add_theme_support( 'post-thumbnails' );
-		add_theme_support(
-			'html5',
-			array(
-				'search-form',
-				'comment-form',
-				'comment-list',
-				'gallery',
-				'caption',
-				'script',
-				'style',
-				'navigation-widgets',
-			)
-		);
+        add_theme_support('title-tag');
+        add_theme_support('automatic-feed-links');
+        add_theme_support('post-thumbnails');
+        add_theme_support('html5', [
+            'search-form', 'comment-form', 'comment-list', 'gallery',
+            'caption', 'script', 'style', 'navigation-widgets'
+        ]);
+        add_theme_support('wp-block-styles');
+        add_theme_support('align-wide');
+        add_theme_support('editor-styles');
+        add_editor_style('style-editor.css');
 
-		// Add support for Block Styles.
-		add_theme_support( 'wp-block-styles' );
-		// Add support for full and wide alignment.
-		add_theme_support( 'align-wide' );
-		// Add support for Editor Styles.
-		add_theme_support( 'editor-styles' );
-		// Enqueue Editor Styles.
-		add_editor_style( 'style-editor.css' );
+        update_option('image_default_align', 'none');
+        update_option('image_default_link_type', 'none');
+        update_option('image_default_size', 'large');
 
-		// Default attachment display settings.
-		update_option( 'image_default_align', 'none' );
-		update_option( 'image_default_link_type', 'none' );
-		update_option( 'image_default_size', 'large' );
+        add_filter('use_default_gallery_style', '__return_false');
+    }
+    add_action('after_setup_theme', 'solace_digital_setup_theme');
 
-		// Custom CSS styles of WorPress gallery.
-		add_filter( 'use_default_gallery_style', '__return_false' );
-	}
-	add_action( 'after_setup_theme', 'solace_digital_setup_theme' );
+    function solace_digital_load_editor_styles() {
+        if (is_admin()) {
+            wp_enqueue_style('editor-style', get_theme_file_uri('style-editor.css'));
+        }
+    }
+    add_action('enqueue_block_assets', 'solace_digital_load_editor_styles');
 
-	/**
-	 * Enqueue editor stylesheet (for iframed Post Editor):
-	 * https://make.wordpress.org/core/2023/07/18/miscellaneous-editor-changes-in-wordpress-6-3/#post-editor-iframed
-	 *
-	 * @since v3.5.1
-	 *
-	 * @return void
-	 */
-	function solace_digital_load_editor_styles() {
-		if ( is_admin() ) {
-			wp_enqueue_style( 'editor-style', get_theme_file_uri( 'style-editor.css' ) );
-		}
-	}
-	add_action( 'enqueue_block_assets', 'solace_digital_load_editor_styles' );
-
-	// Disable Block Directory: https://github.com/WordPress/gutenberg/blob/trunk/docs/reference-guides/filters/editor-filters.md#block-directory
-	remove_action( 'enqueue_block_editor_assets', 'wp_enqueue_editor_block_directory_assets' );
-	remove_action( 'enqueue_block_editor_assets', 'gutenberg_enqueue_block_editor_assets_block_directory' );
+    remove_action('enqueue_block_editor_assets', 'wp_enqueue_editor_block_directory_assets');
+    remove_action('enqueue_block_editor_assets', 'gutenberg_enqueue_block_editor_assets_block_directory');
 }
 
-if ( ! function_exists( 'wp_body_open' ) ) {
-	/**
-	 * Fire the wp_body_open action.
-	 *
-	 * Added for backwards compatibility to support pre 5.2.0 WordPress versions.
-	 *
-	 * @since v2.2
-	 *
-	 * @return void
-	 */
-	function wp_body_open() {
-		do_action( 'wp_body_open' );
-	}
+// Backwards compatibility for wp_body_open
+if (!function_exists('wp_body_open')) {
+    function wp_body_open() {
+        do_action('wp_body_open');
+    }
 }
 
-if ( ! function_exists( 'solace_digital_add_user_fields' ) ) {
-	/**
-	 * Add new User fields to Userprofile:
-	 * get_user_meta( $user->ID, 'facebook_profile', true );
-	 *
-	 * @since v1.0
-	 *
-	 * @param array $fields User fields.
-	 *
-	 * @return array
-	 */
-	function solace_digital_add_user_fields( $fields ) {
-		// Add new fields.
-		$fields['facebook_profile'] = 'Facebook URL';
-		$fields['twitter_profile']  = 'Twitter URL';
-		$fields['linkedin_profile'] = 'LinkedIn URL';
-		$fields['xing_profile']     = 'Xing URL';
-		$fields['github_profile']   = 'GitHub URL';
-
-		return $fields;
-	}
-	add_filter( 'user_contactmethods', 'solace_digital_add_user_fields' );
+// Add custom user fields
+if (!function_exists('solace_digital_add_user_fields')) {
+    function solace_digital_add_user_fields($fields) {
+        $fields['facebook_profile'] = 'Facebook URL';
+        $fields['twitter_profile']  = 'Twitter URL';
+        $fields['linkedin_profile'] = 'LinkedIn URL';
+        $fields['xing_profile']     = 'Xing URL';
+        $fields['github_profile']   = 'GitHub URL';
+        return $fields;
+    }
+    add_filter('user_contactmethods', 'solace_digital_add_user_fields');
 }
 
-/**
- * Test if a page is a blog page.
- * if ( is_blog() ) { ... }
- *
- * @since v1.0
- *
- * @global WP_Post $post Global post object.
- *
- * @return bool
- */
+// Check if current page is blog
 function is_blog() {
-	global $post;
-	$posttype = get_post_type( $post );
-
-	return ( ( is_archive() || is_author() || is_category() || is_home() || is_single() || ( is_tag() && ( 'post' === $posttype ) ) ) ? true : false );
+    global $post;
+    $posttype = get_post_type($post);
+    return (is_archive() || is_author() || is_category() || is_home() || is_single() || (is_tag() && ('post' === $posttype)));
 }
 
-/**
- * Disable comments for Media (Image-Post, Jetpack-Carousel, etc.)
- *
- * @since v1.0
- *
- * @param bool $open    Comments open/closed.
- * @param int  $post_id Post ID.
- *
- * @return bool
- */
-function solace_digital_filter_media_comment_status( $open, $post_id = null ) {
-	$media_post = get_post( $post_id );
-
-	if ( 'attachment' === $media_post->post_type ) {
-		return false;
-	}
-
-	return $open;
+// Disable comments on media
+function solace_digital_filter_media_comment_status($open, $post_id = null) {
+    $media_post = get_post($post_id);
+    if ('attachment' === $media_post->post_type) {
+        return false;
+    }
+    return $open;
 }
-add_filter( 'comments_open', 'solace_digital_filter_media_comment_status', 10, 2 );
+add_filter('comments_open', 'solace_digital_filter_media_comment_status', 10, 2);
 
-/**
- * Style Edit buttons as badges: https://getbootstrap.com/docs/5.0/components/badge
- *
- * @since v1.0
- *
- * @param string $link Post Edit Link.
- *
- * @return string
- */
-function solace_digital_custom_edit_post_link( $link ) {
-	return str_replace( 'class="post-edit-link"', 'class="post-edit-link badge bg-secondary"', $link );
+// Style edit links
+function solace_digital_custom_edit_post_link($link) {
+    return str_replace('class="post-edit-link"', 'class="post-edit-link badge bg-secondary"', $link);
 }
-add_filter( 'edit_post_link', 'solace_digital_custom_edit_post_link' );
+add_filter('edit_post_link', 'solace_digital_custom_edit_post_link');
 
-/**
- * Style Edit buttons as badges: https://getbootstrap.com/docs/5.0/components/badge
- *
- * @since v1.0
- *
- * @param string $link Comment Edit Link.
- */
-function solace_digital_custom_edit_comment_link( $link ) {
-	return str_replace( 'class="comment-edit-link"', 'class="comment-edit-link badge bg-secondary"', $link );
+function solace_digital_custom_edit_comment_link($link) {
+    return str_replace('class="comment-edit-link"', 'class="comment-edit-link badge bg-secondary"', $link);
 }
-add_filter( 'edit_comment_link', 'solace_digital_custom_edit_comment_link' );
+add_filter('edit_comment_link', 'solace_digital_custom_edit_comment_link');
 
-/**
- * Responsive oEmbed filter: https://getbootstrap.com/docs/5.0/helpers/ratio
- *
- * @since v1.0
- *
- * @param string $html Inner HTML.
- *
- * @return string
- */
-function solace_digital_oembed_filter( $html ) {
-	return '<div class="ratio ratio-16x9">' . $html . '</div>';
+// Responsive oEmbed
+function solace_digital_oembed_filter($html) {
+    return '<div class="ratio ratio-16x9">' . $html . '</div>';
 }
-add_filter( 'embed_oembed_html', 'solace_digital_oembed_filter', 10 );
+add_filter('embed_oembed_html', 'solace_digital_oembed_filter', 10);
 
-if ( ! function_exists( 'solace_digital_content_nav' ) ) {
-	/**
-	 * Display a navigation to next/previous pages when applicable.
-	 *
-	 * @since v1.0
-	 *
-	 * @param string $nav_id Navigation ID.
-	 */
-	function solace_digital_content_nav( $nav_id ) {
-		global $wp_query;
+// Content navigation
+if (!function_exists('solace_digital_content_nav')) {
+    function solace_digital_content_nav($nav_id) {
+        global $wp_query;
+        if ($wp_query->max_num_pages > 1) {
+            echo '<div id="' . esc_attr($nav_id) . '" class="d-flex mb-4 justify-content-between">';
+            echo '<div>' . get_next_posts_link('<span aria-hidden="true">&larr;</span> ' . esc_html__('Older posts', 'solace-digital')) . '</div>';
+            echo '<div>' . get_previous_posts_link(esc_html__('Newer posts', 'solace-digital') . ' <span aria-hidden="true">&rarr;</span>') . '</div>';
+            echo '</div>';
+        } else {
+            echo '<div class="clearfix"></div>';
+        }
+    }
 
-		if ( $wp_query->max_num_pages > 1 ) {
-			?>
-			<div id="<?php echo esc_attr( $nav_id ); ?>" class="d-flex mb-4 justify-content-between">
-				<div><?php next_posts_link( '<span aria-hidden="true">&larr;</span> ' . esc_html__( 'Older posts', 'solace-digital' ) ); ?></div>
-				<div><?php previous_posts_link( esc_html__( 'Newer posts', 'solace-digital' ) . ' <span aria-hidden="true">&rarr;</span>' ); ?></div>
-			</div><!-- /.d-flex -->
-			<?php
-		} else {
-			echo '<div class="clearfix"></div>';
-		}
-	}
-
-	/**
-	 * Add Class.
-	 *
-	 * @since v1.0
-	 *
-	 * @return string
-	 */
-	function posts_link_attributes() {
-		return 'class="btn btn-secondary btn-lg"';
-	}
-	add_filter( 'next_posts_link_attributes', 'posts_link_attributes' );
-	add_filter( 'previous_posts_link_attributes', 'posts_link_attributes' );
+    function posts_link_attributes() {
+        return 'class="btn btn-secondary btn-lg"';
+    }
+    add_filter('next_posts_link_attributes', 'posts_link_attributes');
+    add_filter('previous_posts_link_attributes', 'posts_link_attributes');
 }
 
-/**
- * Init Widget areas in Sidebar.
- *
- * @since v1.0
- *
- * @return void
- */
+// Register sidebars
 function solace_digital_widgets_init() {
-	// Area 1.
-	register_sidebar(
-		array(
-			'name'          => 'Primary Widget Area (Sidebar)',
-			'id'            => 'primary_widget_area',
-			'before_widget' => '',
-			'after_widget'  => '',
-			'before_title'  => '<h3 class="widget-title">',
-			'after_title'   => '</h3>',
-		)
-	);
-
-	// Area 2.
-	register_sidebar(
-		array(
-			'name'          => 'Secondary Widget Area (Header Navigation)',
-			'id'            => 'secondary_widget_area',
-			'before_widget' => '',
-			'after_widget'  => '',
-			'before_title'  => '<h3 class="widget-title">',
-			'after_title'   => '</h3>',
-		)
-	);
-
-	// Area 3.
-	register_sidebar(
-		array(
-			'name'          => 'Third Widget Area (Footer)',
-			'id'            => 'third_widget_area',
-			'before_widget' => '',
-			'after_widget'  => '',
-			'before_title'  => '<h3 class="widget-title">',
-			'after_title'   => '</h3>',
-		)
-	);
+    $sidebars = [
+        'primary_widget_area'   => 'Primary Widget Area (Sidebar)',
+        'secondary_widget_area' => 'Secondary Widget Area (Header Navigation)',
+        'third_widget_area'     => 'Third Widget Area (Footer)',
+    ];
+    foreach ($sidebars as $id => $name) {
+        register_sidebar([
+            'name'          => $name,
+            'id'            => $id,
+            'before_widget' => '',
+            'after_widget'  => '',
+            'before_title'  => '<h3 class="widget-title">',
+            'after_title'   => '</h3>',
+        ]);
+    }
 }
-add_action( 'widgets_init', 'solace_digital_widgets_init' );
+add_action('widgets_init', 'solace_digital_widgets_init');
 
-if ( ! function_exists( 'solace_digital_article_posted_on' ) ) {
-	/**
-	 * "Theme posted on" pattern.
-	 *
-	 * @since v1.0
-	 */
-	function solace_digital_article_posted_on() {
-		printf(
-			wp_kses_post( __( '<span class="sep">Posted on </span><a href="%1$s" title="%2$s" rel="bookmark"><time class="entry-date" datetime="%3$s">%4$s</time></a><span class="by-author"> <span class="sep"> by </span> <span class="author-meta vcard"><a class="url fn n" href="%5$s" title="%6$s" rel="author">%7$s</a></span></span>', 'solace-digital' ) ),
-			esc_url( get_permalink() ),
-			esc_attr( get_the_date() . ' - ' . get_the_time() ),
-			esc_attr( get_the_date( 'c' ) ),
-			esc_html( get_the_date() . ' - ' . get_the_time() ),
-			esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) ),
-			sprintf( esc_attr__( 'View all posts by %s', 'solace-digital' ), get_the_author() ),
-			get_the_author()
-		);
-	}
+// Nav menus
+if (function_exists('register_nav_menus')) {
+    register_nav_menus([
+        'main-menu'   => 'Main Navigation Menu',
+        'footer-menu' => 'Footer Menu',
+    ]);
 }
 
-/**
- * Template for Password protected post form.
- *
- * @since v1.0
- *
- * @global WP_Post $post Global post object.
- *
- * @return string
- */
-function solace_digital_password_form() {
-	global $post;
-	$label = 'pwbox-' . ( empty( $post->ID ) ? wp_rand() : $post->ID );
-
-	$output                  = '<div class="row">';
-		$output             .= '<form action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" method="post">';
-		$output             .= '<h4 class="col-md-12 alert alert-warning">' . esc_html__( 'This content is password protected. To view it please enter your password below.', 'solace-digital' ) . '</h4>';
-			$output         .= '<div class="col-md-6">';
-				$output     .= '<div class="input-group">';
-					$output .= '<input type="password" name="post_password" id="' . esc_attr( $label ) . '" placeholder="' . esc_attr__( 'Password', 'solace-digital' ) . '" class="form-control" />';
-					$output .= '<div class="input-group-append"><input type="submit" name="submit" class="btn btn-primary" value="' . esc_attr__( 'Submit', 'solace-digital' ) . '" /></div>';
-				$output     .= '</div><!-- /.input-group -->';
-			$output         .= '</div><!-- /.col -->';
-		$output             .= '</form>';
-	$output                 .= '</div><!-- /.row -->';
-
-	return $output;
-}
-add_filter( 'the_password_form', 'solace_digital_password_form' );
-
-
-if ( ! function_exists( 'solace_digital_comment' ) ) {
-	/**
-	 * Style Reply link.
-	 *
-	 * @since v1.0
-	 *
-	 * @param string $link Link output.
-	 *
-	 * @return string
-	 */
-	function solace_digital_replace_reply_link_class( $link ) {
-		return str_replace( "class='comment-reply-link", "class='comment-reply-link btn btn-outline-secondary", $link );
-	}
-	add_filter( 'comment_reply_link', 'solace_digital_replace_reply_link_class' );
-
-	/**
-	 * Template for comments and pingbacks:
-	 * add function to comments.php ... wp_list_comments( array( 'callback' => 'solace_digital_comment' ) );
-	 *
-	 * @since v1.0
-	 *
-	 * @param object $comment Comment object.
-	 * @param array  $args    Comment args.
-	 * @param int    $depth   Comment depth.
-	 */
-	function solace_digital_comment( $comment, $args, $depth ) {
-		$GLOBALS['comment'] = $comment;
-		switch ( $comment->comment_type ) :
-			case 'pingback':
-			case 'trackback':
-				?>
-		<li class="post pingback">
-			<p>
-				<?php
-					esc_html_e( 'Pingback:', 'solace-digital' );
-					comment_author_link();
-					edit_comment_link( esc_html__( 'Edit', 'solace-digital' ), '<span class="edit-link">', '</span>' );
-				?>
-			</p>
-				<?php
-				break;
-			default:
-				?>
-		<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
-			<article id="comment-<?php comment_ID(); ?>" class="comment">
-				<footer class="comment-meta">
-					<div class="comment-author vcard">
-						<?php
-							$avatar_size = ( '0' !== $comment->comment_parent ? 68 : 136 );
-							echo get_avatar( $comment, $avatar_size );
-
-							/* Translators: 1: Comment author, 2: Date and time */
-							printf(
-								wp_kses_post( __( '%1$s, %2$s', 'solace-digital' ) ),
-								sprintf( '<span class="fn">%s</span>', get_comment_author_link() ),
-								sprintf(
-									'<a href="%1$s"><time datetime="%2$s">%3$s</time></a>',
-									esc_url( get_comment_link( $comment->comment_ID ) ),
-									get_comment_time( 'c' ),
-									/* Translators: 1: Date, 2: Time */
-									sprintf( esc_html__( '%1$s ago', 'solace-digital' ), human_time_diff( (int) get_comment_time( 'U' ), current_time( 'timestamp' ) ) )
-								)
-							);
-
-							edit_comment_link( esc_html__( 'Edit', 'solace-digital' ), '<span class="edit-link">', '</span>' );
-						?>
-					</div><!-- .comment-author .vcard -->
-
-					<?php if ( '0' === $comment->comment_approved ) { ?>
-						<em class="comment-awaiting-moderation">
-							<?php esc_html_e( 'Your comment is awaiting moderation.', 'solace-digital' ); ?>
-						</em>
-						<br />
-					<?php } ?>
-				</footer>
-
-				<div class="comment-content"><?php comment_text(); ?></div>
-
-				<div class="reply">
-					<?php
-						comment_reply_link(
-							array_merge(
-								$args,
-								array(
-									'reply_text' => esc_html__( 'Reply', 'solace-digital' ) . ' <span>&darr;</span>',
-									'depth'      => $depth,
-									'max_depth'  => $args['max_depth'],
-								)
-							)
-						);
-					?>
-				</div><!-- /.reply -->
-			</article><!-- /#comment-## -->
-				<?php
-				break;
-		endswitch;
-	}
-
-	/**
-	 * Custom Comment form.
-	 *
-	 * @since v1.0
-	 * @since v1.1: Added 'submit_button' and 'submit_field'
-	 * @since v2.0.2: Added '$consent' and 'cookies'
-	 *
-	 * @param array $args    Form args.
-	 * @param int   $post_id Post ID.
-	 *
-	 * @return array
-	 */
-	function solace_digital_custom_commentform( $args = array(), $post_id = null ) {
-		if ( null === $post_id ) {
-			$post_id = get_the_ID();
-		}
-
-		$commenter     = wp_get_current_commenter();
-		$user          = wp_get_current_user();
-		$user_identity = $user->exists() ? $user->display_name : '';
-
-		$args = wp_parse_args( $args );
-
-		$req      = get_option( 'require_name_email' );
-		$aria_req = ( $req ? " aria-required='true' required" : '' );
-		$consent  = ( empty( $commenter['comment_author_email'] ) ? '' : ' checked="checked"' );
-		$fields   = array(
-			'author'  => '<div class="form-floating mb-3">
-							<input type="text" id="author" name="author" class="form-control" value="' . esc_attr( $commenter['comment_author'] ) . '" placeholder="' . esc_html__( 'Name', 'solace-digital' ) . ( $req ? '*' : '' ) . '"' . $aria_req . ' />
-							<label for="author">' . esc_html__( 'Name', 'solace-digital' ) . ( $req ? '*' : '' ) . '</label>
-						</div>',
-			'email'   => '<div class="form-floating mb-3">
-							<input type="email" id="email" name="email" class="form-control" value="' . esc_attr( $commenter['comment_author_email'] ) . '" placeholder="' . esc_html__( 'Email', 'solace-digital' ) . ( $req ? '*' : '' ) . '"' . $aria_req . ' />
-							<label for="email">' . esc_html__( 'Email', 'solace-digital' ) . ( $req ? '*' : '' ) . '</label>
-						</div>',
-			'url'     => '',
-			'cookies' => '<p class="form-check mb-3 comment-form-cookies-consent">
-							<input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" class="form-check-input" type="checkbox" value="yes"' . $consent . ' />
-							<label class="form-check-label" for="wp-comment-cookies-consent">' . esc_html__( 'Save my name, email, and website in this browser for the next time I comment.', 'solace-digital' ) . '</label>
-						</p>',
-		);
-
-		$defaults = array(
-			'fields'               => apply_filters( 'comment_form_default_fields', $fields ),
-			'comment_field'        => '<div class="form-floating mb-3">
-											<textarea id="comment" name="comment" class="form-control" aria-required="true" required placeholder="' . esc_attr__( 'Comment', 'solace-digital' ) . ( $req ? '*' : '' ) . '"></textarea>
-											<label for="comment">' . esc_html__( 'Comment', 'solace-digital' ) . '</label>
-										</div>',
-			/** This filter is documented in wp-includes/link-template.php */
-			'must_log_in'          => '<p class="must-log-in">' . sprintf( wp_kses_post( __( 'You must be <a href="%s">logged in</a> to post a comment.', 'solace-digital' ) ), wp_login_url( esc_url( get_permalink( get_the_ID() ) ) ) ) . '</p>',
-			/** This filter is documented in wp-includes/link-template.php */
-			'logged_in_as'         => '<p class="logged-in-as">' . sprintf( wp_kses_post( __( 'Logged in as <a href="%1$s">%2$s</a>. <a href="%3$s" title="Log out of this account">Log out?</a>', 'solace-digital' ) ), get_edit_user_link(), $user->display_name, wp_logout_url( apply_filters( 'the_permalink', esc_url( get_permalink( get_the_ID() ) ) ) ) ) . '</p>',
-			'comment_notes_before' => '<p class="small comment-notes">' . esc_html__( 'Your Email address will not be published.', 'solace-digital' ) . '</p>',
-			'comment_notes_after'  => '',
-			'id_form'              => 'commentform',
-			'id_submit'            => 'submit',
-			'class_submit'         => 'btn btn-primary',
-			'name_submit'          => 'submit',
-			'title_reply'          => '',
-			'title_reply_to'       => esc_html__( 'Leave a Reply to %s', 'solace-digital' ),
-			'cancel_reply_link'    => esc_html__( 'Cancel reply', 'solace-digital' ),
-			'label_submit'         => esc_html__( 'Post Comment', 'solace-digital' ),
-			'submit_button'        => '<input type="submit" id="%2$s" name="%1$s" class="%3$s" value="%4$s" />',
-			'submit_field'         => '<div class="form-submit">%1$s %2$s</div>',
-			'format'               => 'html5',
-		);
-
-		return $defaults;
-	}
-	add_filter( 'comment_form_defaults', 'solace_digital_custom_commentform' );
-}
-
-if ( function_exists( 'register_nav_menus' ) ) {
-	/**
-	 * Nav menus.
-	 *
-	 * @since v1.0
-	 *
-	 * @return void
-	 */
-	register_nav_menus(
-		array(
-			'main-menu'   => 'Main Navigation Menu',
-			'footer-menu' => 'Footer Menu',
-		)
-	);
-}
-
-// Custom Nav Walker: wp_bootstrap_navwalker().
+// Include custom nav walkers
 $custom_walker = __DIR__ . '/inc/wp-bootstrap-navwalker.php';
-if ( is_readable( $custom_walker ) ) {
-	require_once $custom_walker;
-}
+if (is_readable($custom_walker)) require_once $custom_walker;
 
 $custom_walker_footer = __DIR__ . '/inc/wp-bootstrap-navwalker-footer.php';
-if ( is_readable( $custom_walker_footer ) ) {
-	require_once $custom_walker_footer;
-}
+if (is_readable($custom_walker_footer)) require_once $custom_walker_footer;
 
-/**
- * Loading All CSS Stylesheets and Javascript Files.
- *
- * @since v1.0
- *
- * @return void
- */
+// Enqueue styles and scripts
 function solace_digital_scripts_loader() {
-	$theme_version = wp_get_theme()->get( 'Version' );
+    $theme_version = wp_get_theme()->get('Version');
 
-	// 1. Styles.
-	wp_enqueue_style( 'style', get_theme_file_uri( 'style.css' ), array(), $theme_version, 'all' );
-	wp_enqueue_style( 'main', get_theme_file_uri( 'build/main.css' ), array(), $theme_version, 'all' ); // main.scss: Compiled Framework source + custom styles.
+    wp_enqueue_style('style', get_theme_file_uri('style.css'), [], $theme_version);
+    wp_enqueue_style('main', get_theme_file_uri('build/main.css'), [], $theme_version);
+    if (is_rtl()) wp_enqueue_style('rtl', get_theme_file_uri('build/rtl.css'), [], $theme_version);
 
-	if ( is_rtl() ) {
-		wp_enqueue_style( 'rtl', get_theme_file_uri( 'build/rtl.css' ), array(), $theme_version, 'all' );
-	}
+    wp_enqueue_script('mainjs', get_theme_file_uri('build/main.js'), [], $theme_version, true);
 
-	// 2. Scripts.
-	wp_enqueue_script( 'mainjs', get_theme_file_uri( 'build/main.js' ), array(), $theme_version, true );
+    if (is_singular() && comments_open() && get_option('thread_comments')) {
+        wp_enqueue_script('comment-reply');
+    }
 
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
+    // Swiper
+    wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], null);
+    wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
+    wp_add_inline_script('swiper-js', 'document.addEventListener("DOMContentLoaded", function() {
+        new Swiper(".my-post-carousel", {
+            slidesPerView: 3,
+            spaceBetween: 20,
+            grabCursor: true,
+            loop: true,
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+            pagination: { el: ".swiper-pagination", clickable: true },
+        });
+    });');
 }
-add_action( 'wp_enqueue_scripts', 'solace_digital_scripts_loader' );
+add_action('wp_enqueue_scripts', 'solace_digital_scripts_loader');
 
-// Custom Components
-
-// Register [now_playing] shortcode
-function now_playing_shortcode( $atts ) {
-    // Define default attributes (so you can pass custom text if needed)
-    $atts = shortcode_atts(
-        array(
-            'title'   => 'Now Playing',
-            'quote'   => '“I always knew you were special”',
-        ),
-        $atts,
-        'now_playing'
-    );
-
+// Shortcode: [now_playing]
+function now_playing_shortcode($atts) {
+    $atts = shortcode_atts(['title' => 'Now Playing', 'quote' => '“I always knew you were special”'], $atts, 'now_playing');
     ob_start(); ?>
-    
     <div class="now-playing">
-        <div class="play-icon">
-            <i class="fa-solid fa-circle-play"></i>
-        </div>
+        <div class="play-icon"><i class="fa-solid fa-circle-play"></i></div>
         <div class="text-side">
-            <h3><?php echo esc_html( $atts['title'] ); ?></h3>
-            <span><?php echo esc_html( $atts['quote'] ); ?></span>
+            <h3><?php echo esc_html($atts['title']); ?></h3>
+            <span><?php echo esc_html($atts['quote']); ?></span>
         </div>
     </div>
-
     <?php
     return ob_get_clean();
 }
-add_shortcode( 'now_playing', 'now_playing_shortcode' );
-
-
-function mytheme_enqueue_swiper() {
-    // Swiper CSS
-    wp_enqueue_style(
-        'swiper-css',
-        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
-        [],
-        null
-    );
-
-    // Swiper JS
-    wp_enqueue_script(
-        'swiper-js',
-        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
-        [],
-        null,
-        true
-    );
-
-    // Init script
-    wp_add_inline_script(
-        'swiper-js',
-        'document.addEventListener("DOMContentLoaded", function() {
-            new Swiper(".my-post-carousel", {
-                slidesPerView: 3,
-                spaceBetween: 20,
-                grabCursor: true,
-                loop: true,
-                navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-                pagination: { el: ".swiper-pagination", clickable: true },
-            });
-        });'
-    );
-}
-add_action('wp_enqueue_scripts', 'mytheme_enqueue_swiper');
-
-
-// Get Job Ttile to show up in the CMS
+add_shortcode('now_playing', 'now_playing_shortcode');
 
 // Shortcode: [person_job_title]
 function shortcode_person_job_title($atts) {
-    $atts = shortcode_atts([
-        'id'   => '',   // Person post ID
-        'slug' => '',   // Or Person slug
-    ], $atts, 'person_job_title');
-
-    $post_id = null;
-
-    // Figure out which post we’re targeting
-    if (!empty($atts['id'])) {
-        $post_id = intval($atts['id']);
-    } elseif (!empty($atts['slug'])) {
-        $person = get_page_by_path(sanitize_title($atts['slug']), OBJECT, 'person');
-        if ($person) {
-            $post_id = $person->ID;
-        }
-    } else {
-        $post_id = get_the_ID();
-    }
-
-    // Debug check – are we getting the right post?
-    if (!$post_id) {
-        return '<!-- No post ID resolved -->';
-    }
-
-    // Ensure it’s the Person CPT
-    if (get_post_type($post_id) !== 'person') {
-        return '<!-- Post ' . $post_id . ' is not type person -->';
-    }
-
-    // Pull ACF field
+    $atts = shortcode_atts(['id' => '', 'slug' => ''], $atts, 'person_job_title');
+    $post_id = !empty($atts['id']) ? intval($atts['id']) : (!empty($atts['slug']) ? get_page_by_path(sanitize_title($atts['slug']), OBJECT, 'person')->ID ?? null : get_the_ID());
+    if (!$post_id || get_post_type($post_id) !== 'person') return '';
     $job_title = get_field('job_title', $post_id);
-
-    if ($job_title) {
-        return '<span class="person-job-title">' . esc_html($job_title) . '</span>';
-    }
-
-    return '<!-- No job_title field found for post ' . $post_id . ' -->';
+    return $job_title ? '<span class="person-job-title">' . esc_html($job_title) . '</span>' : '';
 }
 add_shortcode('person_job_title', 'shortcode_person_job_title');
 
-// Shortcode for gutenburg carousel
+// Shortcode: [post_carousel]
 function my_post_type_carousel_shortcode($atts) {
-    $atts = shortcode_atts([
-        'post_type' => 'post',
-        'posts_per_page' => 6,
-    ], $atts);
-
-    $query = new WP_Query([
-        'post_type'      => $atts['post_type'],
-        'posts_per_page' => $atts['posts_per_page'],
-    ]);
-
+    $atts = shortcode_atts(['post_type' => 'post', 'posts_per_page' => 6], $atts);
+    $query = new WP_Query(['post_type' => $atts['post_type'], 'posts_per_page' => $atts['posts_per_page']]);
     ob_start();
     if ($query->have_posts()) : ?>
         <div class="swiper my-post-carousel">
@@ -694,249 +226,138 @@ function my_post_type_carousel_shortcode($atts) {
                 <?php while ($query->have_posts()) : $query->the_post(); ?>
                     <div class="swiper-slide">
                         <a href="<?php the_permalink(); ?>">
-                            <?php if (has_post_thumbnail()) : ?>
-                                <?php the_post_thumbnail('medium'); ?>
-                            <?php endif; ?>
+                            <?php if (has_post_thumbnail()) the_post_thumbnail('medium'); ?>
                             <h3><?php the_title(); ?></h3>
                         </a>
                     </div>
                 <?php endwhile; ?>
             </div>
-
-            <!-- Optional navigation -->
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
             <div class="swiper-pagination"></div>
         </div>
     <?php endif;
     wp_reset_postdata();
-
     return ob_get_clean();
 }
 add_shortcode('post_carousel', 'my_post_type_carousel_shortcode');
 
-function post_carousel_shortcode($atts) {
-    $atts = shortcode_atts([
-        'post_type'      => 'solace-film',
-        'posts_per_page' => 8,
-    ], $atts, 'post_carousel');
-
-    $query = new WP_Query([
-        'post_type'      => $atts['post_type'],
-        'posts_per_page' => $atts['posts_per_page'],
-    ]);
-
-    if (!$query->have_posts()) {
-        return '<p>No posts found.</p>';
-    }
-
-    $output  = '<div class="post-carousel-wrapper">';
-    $output .= '<div class="post-carousel">';
-
-    while ($query->have_posts()) {
-        $query->the_post();
-        $output .= '<div class="carousel-item">';
-        $output .= '<h3>' . get_the_title() . '</h3>';
-        $output .= '</div>';
-    }
-
-    $output .= '</div>'; // .post-carousel
-    $output .= '</div>'; // .post-carousel-wrapper
-
-    // Include simple JS for dragging
-    $output .= '
-    <script>
-    (function() {
-        const carousel = document.querySelector(".post-carousel");
-        let isDown = false, startX, scrollLeft;
-
-        carousel.addEventListener("mousedown", (e) => {
-            isDown = true;
-            carousel.classList.add("active");
-            startX = e.pageX - carousel.offsetLeft;
-            scrollLeft = carousel.scrollLeft;
-        });
-        carousel.addEventListener("mouseleave", () => {
-            isDown = false;
-            carousel.classList.remove("active");
-        });
-        carousel.addEventListener("mouseup", () => {
-            isDown = false;
-            carousel.classList.remove("active");
-        });
-        carousel.addEventListener("mousemove", (e) => {
-            if(!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - carousel.offsetLeft;
-            const walk = (x - startX) * 2; // scroll-fast
-            carousel.scrollLeft = scrollLeft - walk;
-        });
-    })();
-    </script>
-    ';
-
-    wp_reset_postdata();
-    return $output;
-}
-add_shortcode('post_carousel', 'post_carousel_shortcode');
-
-function test_carousel_shortcode() {
-    return '<p>Shortcode is working</p>';
-}
-add_shortcode('test_carousel', 'test_carousel_shortcode');
-
-
-// Split menu functionality 
-
-function solace_register_menus() {
-    register_nav_menus( array(
-        'menu-left'  => __( 'Header Left Menu', 'solace-digital' ),
-        'menu-right' => __( 'Header Right Menu', 'solace-digital' ),
-    ) );
-}
-add_action( 'init', 'solace_register_menus' );
-
-
-// Add data attributes to Solace Film posts (used by old Works page Query Loop)
+// Solace Film Query Loop: inject data attributes
 add_filter('render_block', function($block_content, $block) {
-	if (empty($block['blockName']) || $block['blockName'] !== 'core/post-template') {
-		return $block_content;
-	}
+    if (empty($block['blockName']) || $block['blockName'] !== 'core/post-template') return $block_content;
+    libxml_use_internal_errors(true);
+    $doc = new DOMDocument();
+    $doc->loadHTML('<?xml encoding="utf-8" ?>' . $block_content);
+    foreach ($doc->getElementsByTagName('li') as $li) {
+        if (preg_match('/post-(\d+)/', $li->getAttribute('class'), $matches)) {
+            $post_id = intval($matches[1]);
+            if (get_post_type($post_id) !== 'solace-film') continue;
+            $title = esc_attr(get_the_title($post_id));
+            $director = esc_attr(get_field('director', $post_id));
+            $release_full = get_field('release_date', $post_id);
+            $release_year = $release_full ? date('Y', strtotime($release_full)) : 'TBC';
+            $url = esc_url(get_permalink($post_id));
+            $li->setAttribute('data-title', $title ?: 'Untitled');
+            $li->setAttribute('data-director', $director ?: 'Unknown');
+            $li->setAttribute('data-release', $release_year ?: 'TBC');
+            $li->setAttribute('data-url', $url);
+        }
+    }
+    $body = $doc->getElementsByTagName('body')->item(0);
+    $output = '';
+    foreach ($body->childNodes as $child) $output .= $doc->saveHTML($child);
+    return $output;
+}, 10, 2);
 
-	// Parse the HTML safely
-	libxml_use_internal_errors(true);
-	$doc = new DOMDocument();
-	$doc->loadHTML('<?xml encoding="utf-8" ?>' . $block_content);
+// Appending video preview for thumbnails in homepage
 
-	$lis = $doc->getElementsByTagName('li');
+add_filter('render_block', function($block_content, $block) {
 
-	foreach ($lis as $li) {
-		if (preg_match('/post-(\d+)/', $li->getAttribute('class'), $matches)) {
-			$post_id = intval($matches[1]);
+    // Only affect Featured Image blocks inside Query Loops
+    if ($block['blockName'] !== 'core/post-featured-image') {
+        return $block_content;
+    }
 
-			// Only apply to Solace Film posts
-			if (get_post_type($post_id) !== 'solace-film') {
-				continue;
-			}
+    // Get the post ID for this tile
+    $post = get_post();
+    if (!$post) return $block_content;
 
-			// Fetch post and ACF data
-			$title    = esc_attr(get_the_title($post_id));
-			$director = esc_attr(get_field('director', $post_id));
-			$release  = esc_attr(get_field('release_date', $post_id));
-			$release_full = get_field('release_date', $post_id);
-			$release_year = $release_full ? date('Y', strtotime($release_full)) : 'TBC';
-			
+    $post_id = $post->ID;
 
-			$url      = esc_url(get_permalink($post_id));
+    // ACF: video_preview (file field)
+    $video_file = get_field('video_preview', $post_id);
 
-			// Assign data attributes
-			$li->setAttribute('data-title', $title ?: 'Untitled');
-			$li->setAttribute('data-director', $director ?: 'Unknown');
-			$li->setAttribute('data-release', $release_year ?: 'TBC');
-			$li->setAttribute('data-url', $url);
-		}
-	}
+    // No video? Return original block
+    if (!$video_file || empty($video_file['url'])) {
+        return $block_content;
+    }
 
-	// Return cleaned HTML
-	$body = $doc->getElementsByTagName('body')->item(0);
-	$output = '';
-	foreach ($body->childNodes as $child) {
-		$output .= $doc->saveHTML($child);
-	}
-	return $output;
+    // Build video HTML
+    $video_html = '
+        <div class="video-preview">
+            <video autoplay muted loop playsinline>
+                <source src="' . esc_url($video_file['url']) . '" type="' . esc_attr($video_file['mime_type'] ?? 'video/mp4') . '">
+            </video>
+        </div>';
+
+    // 1. Remove the existing thumbnail <img>
+    $block_content = preg_replace('/<img[^>]*>/i', '', $block_content);
+
+    // 2. Inject video before </figure>
+    $block_content = str_replace('</a>', $video_html . '</a>', $block_content);
+
+    return $block_content;
 
 }, 10, 2);
 
 
-// Automatically add Solace Film metadata attributes to each Query Loop item
 
-function solace_add_film_data_attributes( $block_content, $block ) {
-    // Only target the Query Loop post template items
-    if (
-        isset( $block['blockName'] ) &&
-        $block['blockName'] === 'core/post-template' &&
-        is_post_type_archive('solace-film')
-    ) {
-        // Use regex to inject attributes into each <li class="wp-block-post ...">
-        $block_content = preg_replace_callback(
-            '/<li\s+class="([^"]*wp-block-post[^"]*)"/',
-            function( $matches ) {
-                global $post;
+/**
+ * Custom Comment Form & Password Form
+ */
 
-                // Get ACF fields or WP data
-                $film_title  = esc_attr( get_the_title( $post->ID ) );
-                $director    = esc_attr( get_field( 'director', $post->ID ) );
-                $release     = esc_attr( get_the_date( 'j F Y', $post->ID ) );
-                $permalink   = esc_url( get_permalink( $post->ID ) );
+// Bootstrap 5 Comment Form
+function solace_digital_bootstrap_comment_form($fields) {
+    $commenter = wp_get_current_commenter();
+    $req = get_option('require_name_email');
+    $aria_req = ($req ? " required aria-required='true'" : '');
 
-                // Build data attributes string
-                $data_attrs = sprintf(
-                    ' class="%s" data-film-title="%s" data-director="%s" data-release="%s" data-link="%s"',
-                    $matches[1],
-                    $film_title,
-                    $director ?: 'Unknown',
-                    $release,
-                    $permalink
-                );
+    $fields = [
+        'author' => '<div class="mb-3"><label for="author" class="form-label">Name *</label>' .
+                    '<input id="author" name="author" type="text" class="form-control" value="' . esc_attr($commenter['comment_author']) . '" ' . $aria_req . '></div>',
 
-                return '<li ' . $data_attrs;
-            },
-            $block_content
-        );
-    }
+        'email'  => '<div class="mb-3"><label for="email" class="form-label">Email *</label>' .
+                    '<input id="email" name="email" type="email" class="form-control" value="' . esc_attr($commenter['comment_author_email']) . '" ' . $aria_req . '></div>',
 
-    return $block_content;
+        'url'    => '<div class="mb-3"><label for="url" class="form-label">Website</label>' .
+                    '<input id="url" name="url" type="url" class="form-control" value="' . esc_attr($commenter['comment_author_url']) . '"></div>',
+    ];
+
+    return $fields;
 }
-add_filter( 'render_block', 'solace_add_film_data_attributes', 10, 2 );
+add_filter('comment_form_default_fields', 'solace_digital_bootstrap_comment_form');
 
-
-// Add ACF Fields to each film post in Query Loop
-
-add_filter('render_block', 'solace_inject_film_acf_into_tiles', 10, 2);
-function solace_inject_film_acf_into_tiles($block_content, $block) {
-
-	// Only target individual posts inside a Query Loop
-	if (
-		$block['blockName'] === 'core/post-template' ||
-		$block['blockName'] === 'core/post'
-	) {
-		return $block_content; // too early — skip
-	}
-
-	// Target the wrapper of each post item in the Query Loop
-	if ($block['blockName'] !== 'core/post-featured-image') {
-		return $block_content;
-	}
-
-	global $post;
-	if (!$post) return $block_content;
-
-	// Get ACF fields for this film post
-	$acf_data = [
-		'film_type'     => get_field('film_type', $post->ID),
-		'release_date'  => get_field('release_date', $post->ID),
-		'producer'      => get_field('producer', $post->ID),
-		'director'      => get_field('director', $post->ID),
-		'video_preview' => get_field('video_preview', $post->ID),
-		'image_preview' => get_field('image_preview', $post->ID),
-	];
-
-	// Convert into data attributes
-	$data_attrs = '';
-	foreach ($acf_data as $key => $val) {
-		if ($val) {
-			$val = esc_attr($val);
-			$data_attrs .= " data-$key=\"$val\"";
-		}
-	}
-
-	// Inject into the parent <li> (the film tile container)
-	$block_content = preg_replace(
-		'/<li class="wp-block-post (.*?)"/',
-		'<li class="wp-block-post $1"' . $data_attrs . '"',
-		$block_content,
-		1
-	);
-
-	return $block_content;
+function solace_digital_bootstrap_comment_textarea($args) {
+    $args['comment_field'] = '<div class="mb-3"><label for="comment" class="form-label">Comment</label>' .
+                             '<textarea id="comment" name="comment" class="form-control" rows="5" required></textarea></div>';
+    $args['class_submit'] = 'btn btn-primary';
+    return $args;
 }
+add_filter('comment_form_defaults', 'solace_digital_bootstrap_comment_textarea');
+
+// Bootstrap 5 Password Form for Protected Posts
+function solace_digital_password_form() {
+    global $post;
+    $label = 'pwbox-' . (empty($post->ID) ? rand() : $post->ID);
+
+    $form = '<form class="post-password-form mb-3" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
+        <p class="mb-2">This content is password protected. To view it, please enter the password below:</p>
+        <div class="input-group mb-3">
+            <input name="post_password" id="' . $label . '" type="password" class="form-control" placeholder="Password">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>';
+
+    return $form;
+}
+add_filter('the_password_form', 'solace_digital_password_form');

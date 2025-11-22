@@ -21,7 +21,10 @@ $director      = get_field('director');
 
 <div id="post-<?php the_ID(); ?>" <?php post_class( 'content' ); ?>>
 	<?php
-		the_content();
+		echo '<div class="film-oscillator-wrap">';
+			the_content(); 
+		echo '</div>';
+
 
 		wp_link_pages(
 			array(
