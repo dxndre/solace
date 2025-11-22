@@ -797,7 +797,7 @@ function solace_register_menus() {
 add_action( 'init', 'solace_register_menus' );
 
 
-// Add data attributes to Solace Film posts (used by Works page Query Loop)
+// Add data attributes to Solace Film posts (used by old Works page Query Loop)
 add_filter('render_block', function($block_content, $block) {
 	if (empty($block['blockName']) || $block['blockName'] !== 'core/post-template') {
 		return $block_content;
@@ -888,3 +888,55 @@ function solace_add_film_data_attributes( $block_content, $block ) {
     return $block_content;
 }
 add_filter( 'render_block', 'solace_add_film_data_attributes', 10, 2 );
+
+
+// Add ACF Fields to each film post in Query Loop
+
+add_filter('render_block', 'solace_inject_film_acf_into_tiles', 10, 2);
+function solace_inject_film_acf_into_tiles($block_content, $block) {
+
+	// Only target individual posts inside a Query Loop
+	if (
+		$block['blockName'] === 'core/post-template' ||
+		$block['blockName'] === 'core/post'
+	) {
+		return $block_content; // too early — skip
+	}
+
+	// Target the wrapper of each post item in the Query Loop
+	if ($block['blockName'] !== 'core/post-featured-image') {
+		return $block_content;
+	}
+
+	global $post;
+	if (!$post) return $block_content;
+
+	// Get ACF fields for this film post
+	$acf_data = [
+		'film_type'     => get_field('film_type', $post->ID),
+		'release_date'  => get_field('release_date', $post->ID),
+		'producer'      => get_field('producer', $post->ID),
+		'director'      => get_field('director', $post->ID),
+		'video_preview' => get_field('video_preview', $post->ID),
+		'image_preview' => get_field('image_preview', $post->ID),
+	];
+
+	// Convert into data attributes
+	$data_attrs = '';
+	foreach ($acf_data as $key => $val) {
+		if ($val) {
+			$val = esc_attr($val);
+			$data_attrs .= " data-$key=\"$val\"";
+		}
+	}
+
+	// Inject into the parent <li> (the film tile container)
+	$block_content = preg_replace(
+		'/<li class="wp-block-post (.*?)"/',
+		'<li class="wp-block-post $1"' . $data_attrs . '"',
+		$block_content,
+		1
+	);
+
+	return $block_content;
+}

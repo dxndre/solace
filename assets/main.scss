@@ -242,6 +242,92 @@ body {
 	}
 
 	&.page-template-page-homepage {
+		#main {
+			max-width: 100%;
+
+			section {
+				&.mosaic-section {
+					padding: 0;
+					margin: 0;
+
+					@include media-breakpoint-up(md) {
+						padding: 0;
+						margin: 0;
+					}
+
+					.mosaic-columns {
+						gap: 8px;
+					}
+
+					.film-tile {
+						position: relative; // key to make overlay work
+						padding: 0 !important;
+
+						figure {
+							margin: 0;
+
+							a {
+								display: block;
+								height: 200px;
+
+								@include media-breakpoint-up(md) {
+									height: 500px;
+								}
+
+								img {
+									height: 100%;
+									width: 100%;
+									object-fit: cover;
+									display: block;
+								}
+							}
+						}
+
+						.film-overlay {
+							position: absolute;
+							inset: 0;
+							background: rgba(0, 0, 0, 0.6); // optional for visibility
+							color: white; // optional
+							opacity: 0;
+							transition: opacity .3s ease;
+							padding: 20px;
+							text-align: center;
+							display: flex;
+							flex-direction: column;
+							justify-content: center;
+							align-items: center;
+
+							.tile-title {
+								font-family: "JetBrains Mono", monospace;
+								margin-bottom: 12px;
+								opacity: 0;
+								transform: translateY(25px);
+								transition: 0.3s all ease;
+								
+								a {
+									color: white;
+								}
+							}
+						}
+
+						&:hover {
+							.film-overlay {
+								opacity: 1;
+
+								.tile-title {
+									opacity: 1;
+									transform: translateY(0);
+									transition: 0.3s all ease
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&.page-template-page-works {
 		aside {
 			&.project-menu {
 				position: fixed;
@@ -415,7 +501,7 @@ body {
 		}
 	}
 
-	&.page-template-page-works {
+	&.page-template-page-works-old {
 		#main {
 			// .hero-header {
 			// 	height: 125px;

@@ -458,8 +458,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // Auto-scroll up to the top of the page when not on footer
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Only run on the homepage
-  if (!document.body.classList.contains('home')) return;
+  // Only run on the Works Page
+  if (!document.body.classList.contains('page-template-page-works')) return;
 
   const main = document.querySelector('main');
   if (!main) return;
@@ -703,4 +703,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+});
+
+
+// Adding ACF Field values inside the film overlays for the homeoage mosaic
+
+document.querySelectorAll('.wp-block-post').forEach(tile => {
+	const overlay = tile.querySelector('.film-overlay .wp-block-group__inner-container');
+	if (!overlay) return;
+
+	overlay.innerHTML += `
+		<p class="film-meta">
+			${tile.dataset.film_type ? `<strong>Type:</strong> ${tile.dataset.film_type}<br>` : ''}
+			${tile.dataset.release_date ? `<strong>Release:</strong> ${tile.dataset.release_date}<br>` : ''}
+			${tile.dataset.director ? `<strong>Director:</strong> ${tile.dataset.director}<br>` : ''}
+			${tile.dataset.producer ? `<strong>Producer:</strong> ${tile.dataset.producer}<br>` : ''}
+		</p>
+	`;
+
+	// Store preview media for lightbox
+	if (tile.dataset.video_preview) {
+		overlay.dataset.videoPreview = tile.dataset.video_preview;
+	}
+
+	if (tile.dataset.image_preview) {
+		overlay.dataset.imagePreview = tile.dataset.image_preview;
+	}
 });
