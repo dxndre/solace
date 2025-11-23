@@ -272,8 +272,12 @@ body {
 
 				.mosaic-columns {
 					display: grid;
-					grid-template-columns: repeat(3, 1fr); // adjust to 4 if desired
+					grid-template-columns: repeat(2, 1fr);
 					gap: 8px;
+
+					@include media-breakpoint-up(md) {
+						grid-template-columns: repeat(3, 1fr);
+					}
 
 					.wp-block-post {
 						overflow: hidden;
@@ -343,6 +347,10 @@ body {
 									a {
 										color: white;
 									}
+								}
+
+								.film-meta {
+									font-weight: lighter;
 								}
 							}
 

@@ -742,8 +742,6 @@ document.querySelectorAll('.mosaic-columns').forEach(column => {
     });
 });
 
-
-
 // Endless loop for homepage film oscillator
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -786,4 +784,28 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", () => {
     buildColumns();
   });
+});
+
+
+// Make whole mosaic tile clickable 
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tiles = document.querySelectorAll(".film-tile"); // your tile selector
+
+    tiles.forEach(tile => {
+        const anchor = tile.querySelector("a");
+
+        if (!anchor) return; // Skip tiles with no links
+
+        // Make cursor a link
+        tile.style.cursor = "pointer";
+
+        tile.addEventListener("click", (e) => {
+            // Prevent double-activating when clicking the real <a>
+            if (e.target.tagName.toLowerCase() === "a") return;
+
+            // Simulate click on the internal link
+            anchor.click();
+        });
+    });
 });
