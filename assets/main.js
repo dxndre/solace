@@ -733,45 +733,57 @@ document.querySelectorAll('.wp-block-post').forEach(tile => {
 
 // Duplicate rendered queries
 
-document.addEventListener("DOMContentLoaded", () => {
-    const wrap = document.querySelector(".film-oscillator-wrap");
-
-    if (!wrap) return;
-
-    const clone = wrap.cloneNode(true);
-    clone.classList.add("film-oscillator-clone");
-    wrap.after(clone);
+document.querySelectorAll('.mosaic-columns').forEach(column => {
+    const tiles = Array.from(column.children);
+    tiles.forEach(tile => {
+        const clone = tile.cloneNode(true);
+        clone.classList.add('clone'); // optional, for styling/animation
+        column.appendChild(clone);
+    });
 });
+
 
 
 // Endless loop for homepage film oscillator
 
 document.addEventListener("DOMContentLoaded", () => {
-  const columns = document.querySelectorAll(".mosaic-columns > .wp-block-post");
-
-  // Wrap items into column containers
-  const columnCount = 3; // match SCSS grid-template-columns
-  const columnContainers = Array.from({ length: columnCount }, () => {
-    const div = document.createElement("div");
-    div.classList.add("oscillating-column");
-    return div;
-  });
-
-  columns.forEach((item, index) => {
-    const colIndex = index % columnCount;
-    columnContainers[colIndex].appendChild(item);
-  });
-
   const mosaic = document.querySelector(".mosaic-columns");
-  mosaic.innerHTML = ""; // clear original items
-  columnContainers.forEach((col, index) => {
-    // Clone content for endless loop
-    const clone = col.cloneNode(true);
-    col.appendChild(clone);
+  if (!mosaic) return;
 
-    // Assign opposing scroll direction
-    col.classList.add(index % 2 === 0 ? "scroll-up" : "scroll-down");
-    mosaic.appendChild(col);
+  const posts = Array.from(mosaic.children);
+
+  const getColumnCount = () => {
+    const width = window.innerWidth;
+    if (width >= 1200) return 4;
+    if (width >= 768) return 3;
+    if (width >= 576) return 2;
+    return 1;
+  };
+
+  const buildColumns = () => {
+    mosaic.innerHTML = ""; // clear existing
+    const columnCount = getColumnCount();
+    const columns = Array.from({ length: columnCount }, () => {
+      const div = document.createElement("div");
+      div.classList.add("oscillating-column");
+      return div;
+    });
+
+    posts.forEach((post, index) => {
+      const colIndex = index % columnCount;
+      columns[colIndex].appendChild(post.cloneNode(true)); // clone for layout
+    });
+
+    columns.forEach((col, index) => {
+      const clone = col.cloneNode(true); // for infinite loop
+      col.appendChild(clone);
+      col.classList.add(index % 2 === 0 ? "scroll-up" : "scroll-down");
+      mosaic.appendChild(col);
+    });
+  };
+
+  buildColumns();
+  window.addEventListener("resize", () => {
+    buildColumns();
   });
 });
-

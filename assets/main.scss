@@ -245,13 +245,34 @@ body {
 		#main {
 			max-width: 100%;
 
+			.film-oscillator-wrap {
+				height: 100vh;
+				overflow: hidden; // prevents manual scroll
+				position: relative;
+
+				&::after {
+					content: "";
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					width: 100%;
+					height: 90px;
+					background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), #000000);
+					opacity: 1;
+					z-index: 1;
+					pointer-events: none;
+					-webkit-transition: .3s all ease;
+					transition: .3s all ease;
+				}
+			}
+
 			section.mosaic-section {
 				padding: 0;
 				margin: 0;
 
 				.mosaic-columns {
 					display: grid;
-					grid-template-columns: repeat(3, 1fr); // 3 columns, adjust to 4 if needed
+					grid-template-columns: repeat(3, 1fr); // adjust to 4 if desired
 					gap: 8px;
 
 					.wp-block-post {
@@ -270,11 +291,12 @@ body {
 									height: 200px;
 
 									@include media-breakpoint-up(md) {
-										height: 500px;
+										height: 50vh;
 									}
 
 									img,
 									video {
+										filter: saturate(0);
 										width: 100%;
 										height: 100%;
 										object-fit: cover;
@@ -290,6 +312,7 @@ body {
 										width: 100%;
 										height: 100%;
 										display: block;
+										transition: 1s all ease;
 									}
 								}
 							}
@@ -297,7 +320,8 @@ body {
 							.film-overlay {
 								position: absolute;
 								inset: 0;
-								background: rgba(0, 0, 0, 0.6);
+								// background: rgba(0, 0, 0, 0.6);
+								backdrop-filter: blur(0px);
 								color: white;
 								opacity: 0;
 								transition: opacity 0.3s ease;
@@ -306,13 +330,14 @@ body {
 								flex-direction: column;
 								justify-content: center;
 								align-items: center;
+								pointer-events: auto; // ensures hover works
 
 								.tile-title,
 								.film-meta {
 									font-family: "JetBrains Mono", monospace;
 									margin-bottom: 12px;
 									opacity: 0;
-									transform: translateY(25px);
+									transform: translateY(12px);
 									transition: all 0.3s ease;
 
 									a {
@@ -324,6 +349,7 @@ body {
 							&:hover {
 								.film-overlay {
 									opacity: 1;
+									backdrop-filter: blur(15px);
 
 									.tile-title,
 									.film-meta {
@@ -331,16 +357,24 @@ body {
 										transform: translateY(0);
 									}
 								}
+
+								img,
+								video {
+									filter: saturate(1);
+									transform: scale(1.125);
+									transition: 0.5s all ease;
+								}
 							}
 						}
 					}
 				}
 			}
 
-			// Oscillating animation classes
+			// Oscillation animation classes
 			.oscillating-column {
 				display: flex;
 				flex-direction: column;
+				pointer-events: none; // allows hover events on tiles
 
 				&.scroll-up {
 					animation: scrollUp 60s linear infinite;
@@ -349,21 +383,30 @@ body {
 				&.scroll-down {
 					animation: scrollDown 60s linear infinite;
 				}
+
+				.film-tile {
+					pointer-events: auto; // restores hover on each tile
+				}
+			}
+		}
+
+		#footer {
+			.inner-footer {
+				border-top: none;
 			}
 		}
 	}
 
-	// Keyframes
+	// Keyframes for smooth up/down scrolling
 	@keyframes scrollUp {
 		0% { transform: translateY(0); }
 		100% { transform: translateY(-50%); }
 	}
 
 	@keyframes scrollDown {
-		0% { transform: translateY(-50%); }
-		100% { transform: translateY(0); }
+		0% { transform: translateY(0); }
+		100% { transform: translateY(50%); }
 	}
-
 
 
 	&.page-template-page-works {
