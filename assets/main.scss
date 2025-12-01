@@ -271,16 +271,23 @@ body {
 				margin: 0;
 
 				.mosaic-columns {
-					display: grid;
-					grid-template-columns: repeat(2, 1fr);
+					// display: grid;
+					display: flex;
+					flex-direction: column;
+					// grid-template-columns: repeat(2, 1fr);
 					gap: 8px;
 
 					@include media-breakpoint-up(md) {
-						grid-template-columns: repeat(3, 1fr);
+						// grid-template-columns: repeat(3, 1fr);
 					}
 
 					.wp-block-post {
+						width: 300px;
 						overflow: hidden;
+
+						@include media-breakpoint-up(md) {
+							width: 600px;
+						}
 
 						.film-tile {
 							position: relative;
@@ -379,6 +386,24 @@ body {
 			}
 
 			// Oscillation animation classes
+			.oscillating-row {
+				display: flex;               // row scrolls horizontally
+				flex-direction: row;
+				white-space: nowrap;
+				pointer-events: none;        // so hover works on tiles
+				overflow: visible;
+				gap: 16px;
+
+				.film-tile {
+					pointer-events: auto;    // restore hover ability
+					flex-shrink: 0;          // prevents tiles from collapsing
+				}
+
+				&:hover {
+					animation-play-state: paused;
+				}
+			}
+			
 			.oscillating-column {
 				display: flex;
 				flex-direction: column;
@@ -395,6 +420,26 @@ body {
 				.film-tile {
 					pointer-events: auto; // restores hover on each tile
 				}
+			}
+
+			/* Keyframes */
+
+			@keyframes scrollLeft {
+				from { transform: translateX(0); }
+				to   { transform: translateX(-50%); }
+			}
+
+			@keyframes scrollRight {
+				from { transform: translateX(-50%); }
+				to   { transform: translateX(0); }
+			}
+
+			.scroll-left {
+				animation: scrollLeft 40s linear infinite;
+			}
+
+			.scroll-right {
+				animation: scrollRight 40s linear infinite;
 			}
 		}
 

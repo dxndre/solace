@@ -745,47 +745,55 @@ document.querySelectorAll('.mosaic-columns').forEach(column => {
 // Endless loop for homepage film oscillator
 
 document.addEventListener("DOMContentLoaded", () => {
-  const mosaic = document.querySelector(".mosaic-columns");
-  if (!mosaic) return;
+	const mosaic = document.querySelector(".mosaic-columns");
+	if (!mosaic) return;
 
-  const posts = Array.from(mosaic.children);
+	// Original tiles from Gutenberg
+	const tiles = Array.from(mosaic.querySelectorAll(".wp-block-post"));
 
-  const getColumnCount = () => {
-    const width = window.innerWidth;
-    if (width >= 1200) return 4;
-    if (width >= 768) return 3;
-    if (width >= 576) return 2;
-    return 1;
-  };
+	const getRowCount = () => {
+		const width = window.innerWidth;
+		if (width >= 1200) return 4;
+		if (width >= 768) return 3;
+		if (width >= 576) return 2;
+		return 1;
+	};
 
-  const buildColumns = () => {
-    mosaic.innerHTML = ""; // clear existing
-    const columnCount = getColumnCount();
-    const columns = Array.from({ length: columnCount }, () => {
-      const div = document.createElement("div");
-      div.classList.add("oscillating-column");
-      return div;
-    });
+	const buildRows = () => {
+		mosaic.innerHTML = "";
 
-    posts.forEach((post, index) => {
-      const colIndex = index % columnCount;
-      columns[colIndex].appendChild(post.cloneNode(true)); // clone for layout
-    });
+		const rowCount = getRowCount();
+		const rows = Array.from({ length: rowCount }, () => {
+			const row = document.createElement("div");
+			row.classList.add("oscillating-row");
+			return row;
+		});
 
-    columns.forEach((col, index) => {
-      const clone = col.cloneNode(true); // for infinite loop
-      col.appendChild(clone);
-      col.classList.add(index % 2 === 0 ? "scroll-up" : "scroll-down");
-      mosaic.appendChild(col);
-    });
-  };
+		// Distribute tiles across rows (same method as before)
+		tiles.forEach((tile, index) => {
+			const rowIndex = index % rowCount;
+			rows[rowIndex].appendChild(tile.cloneNode(true));
+		});
 
-  buildColumns();
-  window.addEventListener("resize", () => {
-    buildColumns();
-  });
+		// Duplicate rows for infinite loop
+		rows.forEach((row, index) => {
+			const clone = row.cloneNode(true);
+			row.appendChild(clone);
+
+			// Alternating scroll direction
+			if (index % 2 === 0) {
+				row.classList.add("scroll-left");
+			} else {
+				row.classList.add("scroll-right");
+			}
+
+			mosaic.appendChild(row);
+		});
+	};
+
+	buildRows();
+	window.addEventListener("resize", buildRows);
 });
-
 
 // Make whole mosaic tile clickable 
 
