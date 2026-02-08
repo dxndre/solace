@@ -16,18 +16,20 @@
 
 <body <?php body_class(); ?>>
 
+<?php if ( is_page_template( 'page-homepage.php' ) ) : ?>
 <div id="splash-screen">
-  <div class="splash-content">
-    <img class="splash-logo" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/logo.png' ); ?>" 
-         alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
-    <div class="splash-loader">
-      <span id="splash-percent">0%</span>
-    </div>
+	<div class="splash-content">
+		<img class="splash-logo" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/logo.png' ); ?>" 
+				 alt="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" />
+		<div class="splash-loader">
+			<span id="splash-percent">0%</span>
+		</div>
 	<div class="progress-bar">
 		<div class="progress-fill"></div>
 		</div>
-  </div>
+	</div>
 </div>
+<?php endif; ?>
 
 <?php wp_body_open(); ?>
 
@@ -45,7 +47,7 @@
 				echo ' home';
 			}
 		?>">
-			<div class="container d-flex align-items-center justify-content-between">
+			<div class="container d-flex align-items-center justify-content-between nav-container">
 
 				<!-- Left Menu -->
 				<div class="menu-left d-none d-md-flex">

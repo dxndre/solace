@@ -404,6 +404,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		post.addEventListener("mouseenter", () => updateBar(post));
 		post.addEventListener("click", () => updateBar(post)); // Mobile tap
 	});
+
+	// Mosaic row/column count helper for homepage mosaic (used elsewhere)
+	const getRowCount = () => {
+		const width = window.innerWidth;
+		if (width >= 2560) return 5; // 4K+ / ultra-wide
+		if (width >= 1200) return 4;
+		if (width >= 768) return 3;
+		if (width >= 576) return 2;
+		return 1;
+	};
 });
 
 

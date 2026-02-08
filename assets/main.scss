@@ -286,7 +286,11 @@ body {
 						overflow: hidden;
 
 						@include media-breakpoint-up(md) {
-							width: 600px;
+							width: 425px;
+						}
+
+						@include media-breakpoint-up(xl) {
+							width: 650px;
 						}
 
 						.film-tile {
@@ -302,12 +306,12 @@ body {
 									height: 200px;
 
 									@include media-breakpoint-up(md) {
-										height: 50vh;
+										height: 25vh; // Height of the tiles
 									}
 
 									img,
 									video {
-										filter: saturate(0);
+										// filter: saturate(0);
 										width: 100%;
 										height: 100%;
 										object-fit: cover;
@@ -348,6 +352,7 @@ body {
 									font-family: "JetBrains Mono", monospace;
 									margin-bottom: 12px;
 									opacity: 0;
+									text-align: center;
 									transform: translateY(12px);
 									transition: all 0.3s ease;
 
@@ -435,11 +440,11 @@ body {
 			}
 
 			.scroll-left {
-				animation: scrollLeft 40s linear infinite;
+				animation: scrollLeft 20s linear infinite;
 			}
 
 			.scroll-right {
-				animation: scrollRight 40s linear infinite;
+				animation: scrollRight 20s linear infinite;
 			}
 		}
 
@@ -2054,9 +2059,14 @@ img {
 		justify-content: center;
 		gap: 40px;
 		counter-reset: menu-counter;
+		min-height: 70px;
 
 		@include media-breakpoint-up(sm) {
 			padding: 20px 0;
+		}
+
+		@include media-breakpoint-up(lg) {
+			min-height: 80px;
 		}
 
 		.navbar-left,
@@ -2067,6 +2077,15 @@ img {
 			list-style: none;
 			margin: 0;
 			padding: 0;
+
+			@include media-breakpoint-up(md) {
+				transform: translateY(4px);
+			}
+
+			@include media-breakpoint-up(lg) {
+				transform: translateY(0px);
+			}
+			    
 
 			li {
 				counter-increment: menu-counter;
@@ -2096,29 +2115,36 @@ img {
 					}
 				}
 			}
-		}
+		}	
 
-		.navbar-brand {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin: 0 40px;
-			z-index: 200;
+		.nav-container {
+			position: relative;
 
-			img {
-				height: 35px;
-				width: auto;
-				transition: transform 0.3s ease;
-				transition: 0.3s all ease;
+			.navbar-brand {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				// margin: 0 40px;
+				z-index: 200;
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
 
-				&:hover {
-					transform: scale(1.05);
-					filter: brightness(10)saturate(0);
+				img {
+					height: 35px;
+					width: auto;
+					transition: transform 0.3s ease;
 					transition: 0.3s all ease;
-				}
 
-				@include media-breakpoint-up(md) {
-					height: 40px;
+					&:hover {
+						transform: scale(1.05);
+						filter: brightness(10)saturate(0);
+						transition: 0.3s all ease;
+					}
+
+					@include media-breakpoint-up(md) {
+						height: 40px;
+					}
 				}
 			}
 		}
