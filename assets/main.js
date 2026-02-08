@@ -410,9 +410,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		const width = window.innerWidth;
 		if (width >= 2560) return 5; // 4K+ / ultra-wide
 		if (width >= 1200) return 4;
-		if (width >= 768) return 3;
-		if (width >= 576) return 2;
-		return 1;
+		if (width >= 768) return 4;
+		if (width >= 576) return 5;
+		return 5;
 	};
 });
 
@@ -741,36 +741,44 @@ document.querySelectorAll('.wp-block-post').forEach(tile => {
 	}
 });
 
-// Duplicate rendered queries
-
-document.querySelectorAll('.mosaic-columns').forEach(column => {
-    const tiles = Array.from(column.children);
-    tiles.forEach(tile => {
-        const clone = tile.cloneNode(true);
-        clone.classList.add('clone'); // optional, for styling/animation
-        column.appendChild(clone);
-    });
-});
-
 // Endless loop for homepage film oscillator
 
 document.addEventListener("DOMContentLoaded", () => {
 	const mosaic = document.querySelector(".mosaic-columns");
 	if (!mosaic) return;
 
-	// Original tiles from Gutenberg
-	const tiles = Array.from(mosaic.querySelectorAll(".wp-block-post"));
+	// Grab original Gutenberg posts
+	const originalPosts = Array.from(mosaic.querySelectorAll(".wp-block-post"));
+	if (!originalPosts.length) return;
 
-	const getRowCount = () => {
-		const width = window.innerWidth;
-		if (width >= 1200) return 4;
-		if (width >= 768) return 3;
-		if (width >= 576) return 2;
-		return 1;
+	/* ----------------------------------------
+	   Helpers
+	---------------------------------------- */
+
+	// Fisher–Yates shuffle (true random, fast)
+	const shuffle = (array) => {
+		const arr = [...array];
+		for (let i = arr.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[arr[i], arr[j]] = [arr[j], arr[i]];
+		}
+		return arr;
 	};
 
+	const getRowCount = () => {
+		const w = window.innerWidth;
+		if (w < 576) return 5;   // mobile
+		if (w < 768) return 4;
+		return 4;
+	};
+
+	/* ----------------------------------------
+	   Build Rows
+	---------------------------------------- */
+
 	const buildRows = () => {
-		mosaic.innerHTML = "";
+		// Remove previously generated rows
+		document.querySelectorAll(".oscillating-row").forEach(r => r.remove());
 
 		const rowCount = getRowCount();
 		const rows = Array.from({ length: rowCount }, () => {
@@ -779,30 +787,41 @@ document.addEventListener("DOMContentLoaded", () => {
 			return row;
 		});
 
-		// Distribute tiles across rows (same method as before)
-		tiles.forEach((tile, index) => {
-			const rowIndex = index % rowCount;
-			rows[rowIndex].appendChild(tile.cloneNode(true));
+		// Randomise order ON LOAD / RESIZE
+		const shuffledPosts = shuffle(originalPosts);
+
+		// Distribute posts evenly across rows
+		shuffledPosts.forEach((post, i) => {
+			rows[i % rowCount].appendChild(post.cloneNode(true));
 		});
 
-		// Duplicate rows for infinite loop
+		// Duplicate contents ×3 for seamless looping
 		rows.forEach((row, index) => {
-			const clone = row.cloneNode(true);
-			row.appendChild(clone);
+			const tiles = Array.from(row.children);
 
-			// Alternating scroll direction
-			if (index % 2 === 0) {
-				row.classList.add("scroll-left");
-			} else {
-				row.classList.add("scroll-right");
+			for (let i = 0; i < 2; i++) {
+				tiles.forEach(tile => {
+					row.appendChild(tile.cloneNode(true));
+				});
 			}
 
-			mosaic.appendChild(row);
+			// Alternate direction
+			row.classList.add(index % 2 === 0 ? "scroll-left" : "scroll-right");
+
+			// Insert AFTER the Gutenberg UL
+			mosaic.parentNode.appendChild(row);
 		});
 	};
 
+	// Initial build
 	buildRows();
-	window.addEventListener("resize", buildRows);
+
+	// Rebuild on resize (debounced)
+	let resizeTimer;
+	window.addEventListener("resize", () => {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(buildRows, 250);
+	});
 });
 
 // Make whole mosaic tile clickable 

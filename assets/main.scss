@@ -118,9 +118,9 @@ $link-decoration: none;
  * General
  */
 
- html {
+html {
 	background-color: black;
- }
+}
 
  #splash-screen {
 	position: fixed;
@@ -242,217 +242,239 @@ body {
 	}
 
 	&.page-template-page-homepage {
-		#main {
-			max-width: 100%;
 
-			.film-oscillator-wrap {
-				height: 100vh;
-				overflow: hidden; // prevents manual scroll
-				position: relative;
+	#main {
+		max-width: 100%;
 
-				&::after {
-					content: "";
-					position: absolute;
-					bottom: 0;
-					left: 0;
-					width: 100%;
-					height: 90px;
-					background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), #000000);
-					opacity: 1;
-					z-index: 1;
-					pointer-events: none;
-					-webkit-transition: .3s all ease;
-					transition: .3s all ease;
-				}
+		/* =========================================================
+		Film Oscillator Wrapper
+		========================================================= */
+
+		.film-oscillator-wrap {
+			height: 100vh;
+			overflow: hidden;
+			position: relative;
+
+			&::after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				height: 90px;
+				background-image: linear-gradient(
+					180deg,
+					rgba(0, 0, 0, 0),
+					#000000
+				);
+				z-index: 1;
+				pointer-events: none;
+				transition: 0.3s ease;
+			}
+		}
+
+		/* =========================================================
+		Mosaic Section (Gutenberg Group)
+		========================================================= */
+
+		section.mosaic-section {
+			padding: 0;
+			margin: 0;
+
+			/* -----------------------------------------
+				Gutenberg Query → DATA SOURCE ONLY
+			----------------------------------------- */
+
+			.mosaic-columns {
+				display: none; // hidden — JS uses this as source
 			}
 
-			section.mosaic-section {
-				padding: 0;
-				margin: 0;
+			/* -----------------------------------------
+				Oscillating Rows (JS-generated)
+			----------------------------------------- */
 
-				.mosaic-columns {
-					// display: grid;
-					display: flex;
-					flex-direction: column;
-					// grid-template-columns: repeat(2, 1fr);
-					gap: 8px;
-
-					@include media-breakpoint-up(md) {
-						// grid-template-columns: repeat(3, 1fr);
-					}
-
-					.wp-block-post {
-						width: 300px;
-						overflow: hidden;
-
-						@include media-breakpoint-up(md) {
-							width: 425px;
-						}
-
-						@include media-breakpoint-up(xl) {
-							width: 650px;
-						}
-
-						.film-tile {
-							position: relative;
-							padding: 0 !important;
-							margin: 4px 0;
-
-							figure {
-								margin: 0;
-
-								a {
-									display: block;
-									height: 200px;
-
-									@include media-breakpoint-up(md) {
-										height: 25vh; // Height of the tiles
-									}
-
-									img,
-									video {
-										// filter: saturate(0);
-										width: 100%;
-										height: 100%;
-										object-fit: cover;
-										display: block;
-									}
-								}
-
-								.video-preview {
-									width: 100%;
-									height: 100%;
-
-									video {
-										width: 100%;
-										height: 100%;
-										display: block;
-										transition: 1s all ease;
-									}
-								}
-							}
-
-							.film-overlay {
-								position: absolute;
-								inset: 0;
-								// background: rgba(0, 0, 0, 0.6);
-								backdrop-filter: blur(0px);
-								color: white;
-								opacity: 0;
-								transition: opacity 0.3s ease;
-								padding: 20px;
-								display: flex;
-								flex-direction: column;
-								justify-content: center;
-								align-items: center;
-								pointer-events: auto; // ensures hover works
-
-								.tile-title,
-								.film-meta {
-									font-family: "JetBrains Mono", monospace;
-									margin-bottom: 12px;
-									opacity: 0;
-									text-align: center;
-									transform: translateY(12px);
-									transition: all 0.3s ease;
-
-									a {
-										color: white;
-									}
-								}
-
-								.film-meta {
-									font-weight: lighter;
-								}
-							}
-
-							&:hover {
-								.film-overlay {
-									opacity: 1;
-									backdrop-filter: blur(15px);
-
-									.tile-title,
-									.film-meta {
-										opacity: 1;
-										transform: translateY(0);
-									}
-								}
-
-								img,
-								video {
-									filter: saturate(1);
-									transform: scale(1.125);
-									transition: 0.5s all ease;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// Oscillation animation classes
 			.oscillating-row {
-				display: flex;               // row scrolls horizontally
+				display: flex;
 				flex-direction: row;
-				white-space: nowrap;
-				pointer-events: none;        // so hover works on tiles
-				overflow: visible;
 				gap: 16px;
-
-				.film-tile {
-					pointer-events: auto;    // restore hover ability
-					flex-shrink: 0;          // prevents tiles from collapsing
-				}
+				white-space: nowrap;
+				overflow: visible;
+				pointer-events: none;
 
 				&:hover {
 					animation-play-state: paused;
 				}
-			}
-			
-			.oscillating-column {
-				display: flex;
-				flex-direction: column;
-				pointer-events: none; // allows hover events on tiles
 
-				&.scroll-up {
-					animation: scrollUp 60s linear infinite;
+				/* -------------------------------------
+				Individual Post (li.wp-block-post)
+				------------------------------------- */
+
+				.wp-block-post {
+					flex-shrink: 0;
+					pointer-events: auto;
+					width: 300px;
+					list-style: none;
+
+					@include media-breakpoint-up(md) {
+						width: 425px;
+					}
+
+					@include media-breakpoint-up(xl) {
+						width: 650px;
+					}
+
+					/* ---------------------------------
+						Film Tile
+					--------------------------------- */
+
+					.film-tile {
+						position: relative;
+						padding: 0 !important;
+						margin: 4px 0;
+						cursor: pointer;
+						overflow: hidden;
+
+						/* -----------------------------
+						Media (figure → a → img/video)
+						----------------------------- */
+
+						figure {
+							margin: 0;
+
+							a {
+								display: block;
+								height: 100%;
+								height: 20vh;
+
+								@include media-breakpoint-up(md) {
+									height: 25vh;
+								}
+
+								@media screen and (min-width: 2560px) {
+									height: 20vh;
+								}
+
+								img,
+								video {
+									width: 100%;
+									height: 100%;
+									object-fit: cover;
+									display: block;
+									transition: 0.5s ease;
+								}
+							}
+
+							.video-preview {
+								width: 100%;
+								height: 100%;
+
+								video {
+									width: 100%;
+									height: 100%;
+									display: block;
+									transition: 1s ease;
+								}
+							}
+						}
+
+						/* -----------------------------
+						Overlay
+						----------------------------- */
+
+						.film-overlay {
+							position: absolute;
+							inset: 0;
+							padding: 20px;
+							display: flex;
+							flex-direction: column;
+							justify-content: center;
+							align-items: center;
+
+							opacity: 0;
+							backdrop-filter: blur(0);
+							transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
+							pointer-events: auto;
+							color: #fff;
+
+							.tile-title,
+							.film-meta {
+								font-family: "JetBrains Mono", monospace;
+								margin-bottom: 12px;
+								text-align: center;
+
+								opacity: 0;
+								transform: translateY(12px);
+								transition: 0.3s ease;
+
+								a {
+									color: white;
+								}
+							}
+
+							.film-meta {
+								font-weight: lighter;
+							}
+						}
+
+						/* -----------------------------
+						Hover States
+						----------------------------- */
+
+						&:hover {
+							.film-overlay {
+								opacity: 1;
+								backdrop-filter: blur(15px);
+
+								.tile-title,
+								.film-meta {
+									opacity: 1;
+									transform: translateY(0);
+								}
+							}
+
+							img,
+							video {
+								transform: scale(1.125);
+								filter: saturate(1);
+							}
+						}
+					}
 				}
-
-				&.scroll-down {
-					animation: scrollDown 60s linear infinite;
-				}
-
-				.film-tile {
-					pointer-events: auto; // restores hover on each tile
-				}
-			}
-
-			/* Keyframes */
-
-			@keyframes scrollLeft {
-				from { transform: translateX(0); }
-				to   { transform: translateX(-50%); }
-			}
-
-			@keyframes scrollRight {
-				from { transform: translateX(-50%); }
-				to   { transform: translateX(0); }
-			}
-
-			.scroll-left {
-				animation: scrollLeft 20s linear infinite;
-			}
-
-			.scroll-right {
-				animation: scrollRight 20s linear infinite;
 			}
 		}
 
-		#footer {
-			.inner-footer {
-				border-top: none;
-			}
+		/* =========================================================
+		Oscillation Animations
+		========================================================= */
+
+		@keyframes scrollLeft {
+			from { transform: translateX(0); }
+			to   { transform: translateX(-33.333%); }
 		}
+
+		@keyframes scrollRight {
+			from { transform: translateX(-33.333%); }
+			to   { transform: translateX(0); }
+		}
+
+		.scroll-left {
+			animation: scrollLeft 30s linear infinite;
+		}
+
+		.scroll-right {
+			animation: scrollRight 30s linear infinite;
+		}
+	}
+
+	/* =========================================================
+		Footer
+	========================================================= */
+
+	#footer {
+		.inner-footer {
+			border-top: none;
+		}
+	}
 	}
 
 	// Keyframes for smooth up/down scrolling
@@ -474,7 +496,7 @@ body {
 				z-index: 2;
 				height: 100vh;
 				display: none;
-   				align-items: center;
+				align-items: center;
 
 				@include media-breakpoint-up(md) {
 					display: flex;
@@ -1470,9 +1492,9 @@ body {
 							a {
 								border-radius: 0;
 								padding: 10px 15px;
-								background: rgba(0, 0, 0, 0.5);
+								background: rgba(0, 0, 0, 0);
 								backdrop-filter: blur(5px);
-								border: 1px solid transparent;
+								border: 1px solid rgba(255, 255, 255, 0.25);
 								transition: 0.3s all ease;
 								opacity: 0;
 								transform: translateY(10px);
@@ -1489,7 +1511,8 @@ body {
 
 								&:hover {
 									backdrop-filter: blur(0px);
-									background: transparent;
+									background: white;
+									color: black;
 									border: 1px solid white;
 									padding: 10px 30px;
 									transition: 0.3s all ease;
@@ -1549,7 +1572,7 @@ body {
 				.wp-block-cover {
 					img,
 					video {
-						filter: saturate(0)blur(15px)brightness(0.75);
+						filter: blur(15px)brightness(0.75);
 						transform: scale(0.875);
 						transition: 0.5s all ease;
 					}
