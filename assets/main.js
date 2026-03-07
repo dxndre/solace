@@ -32,117 +32,174 @@ document.addEventListener("scroll", function () {
     }
 });
 
-// Homepage projects functionality
+// Homepage / Works projects functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const reel = document.querySelector('.projects-reel');
-    if (!reel) return;
+	const reel = document.querySelector('.projects-reel');
+	if (!reel) return;
 
-    const menuLinks = document.querySelectorAll('.project-menu a');
-    const sections = reel.querySelectorAll('.wp-block-cover');
+	const menuLinks = document.querySelectorAll('.project-menu a');
+	const sections = [...reel.querySelectorAll('.wp-block-cover')];
+	if (!sections.length) return;
 
-    let isScrolling = false;
+	let currentIndex = 0;
+	let isAnimating = false;
 
-    const scrollToSection = (targetIndex) => {
-        if (targetIndex < 0 || targetIndex >= sections.length) return;
-        isScrolling = true;
-        reel.scrollTo({
-            top: sections[targetIndex].offsetTop,
-            behavior: 'smooth'
-        });
-        setTimeout(() => {
-            isScrolling = false;
-        }, 600); // allow smooth scroll to finish
-    };
+	let wheelGestureLocked = false;
+	let wheelAccumulator = 0;
+	let wheelUnlockTimer = null;
 
-    // Wheel event to iterate one section at a time
-    reel.addEventListener('wheel', (e) => {
-        if (isScrolling) {
-            e.preventDefault();
-            return;
-        }
+	let touchStartY = 0;
+	let touchEndY = 0;
 
-        const delta = e.deltaY;
-        const scrollTop = reel.scrollTop;
+	const ANIMATION_DURATION = 1200;
+	const SWIPE_THRESHOLD = 60;
+	const WHEEL_THRESHOLD = 80;
+	const WHEEL_GESTURE_TIMEOUT = 220;
 
-        // Determine current section
-        let currentIndex = 0;
-        sections.forEach((section, idx) => {
-            if (scrollTop >= section.offsetTop) currentIndex = idx;
-        });
+	const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
 
-        if (delta > 0 && currentIndex < sections.length - 1) {
-            // Scroll down
-            e.preventDefault();
-            scrollToSection(currentIndex + 1);
-        } else if (delta < 0 && currentIndex > 0) {
-            // Scroll up
-            e.preventDefault();
-            scrollToSection(currentIndex - 1);
-        }
-        // Otherwise allow normal scrolling if at start or end
-    }, { passive: false });
+	const getClosestSectionIndex = () => {
+		const reelTop = reel.scrollTop;
+		let closestIndex = 0;
+		let smallestDistance = Infinity;
 
-    // Update menu active state
-    function updateMenu() {
-      const viewportCenter = reel.scrollTop + reel.clientHeight / 2;
-      let currentSectionId = null;
+		sections.forEach((section, index) => {
+			const distance = Math.abs(section.offsetTop - reelTop);
+			if (distance < smallestDistance) {
+				smallestDistance = distance;
+				closestIndex = index;
+			}
+		});
 
-      sections.forEach(section => {
-          const top = section.offsetTop;
-          const bottom = top + section.offsetHeight;
-          if (viewportCenter >= top && viewportCenter < bottom) {
-              currentSectionId = section.id;
-          }
-      });
+		return closestIndex;
+	};
 
-      menuLinks.forEach(link => {
-          const li = link.parentElement;
-          const targetId = link.getAttribute('href').replace('#', '');
+	const updateMenu = () => {
+		menuLinks.forEach((link, index) => {
+			const li = link.parentElement;
+			li.classList.toggle('active', index === currentIndex);
+		});
+	};
 
-          li.classList.remove('active');
-          const oldBtn = li.querySelector('.open-project-btn');
-          if (oldBtn) oldBtn.remove(); // optional, in case old ones still exist
+	const scrollToSection = (targetIndex) => {
+		const nextIndex = clamp(targetIndex, 0, sections.length - 1);
+		if (nextIndex === currentIndex || isAnimating) return;
 
-          if (targetId === currentSectionId) {
-              li.classList.add('active');
-              // no button creation anymore
-          }
-      });
-    }
+		isAnimating = true;
+		currentIndex = nextIndex;
+		updateMenu();
 
-    // Smooth scroll for menu links
-    menuLinks.forEach(link => {
-        link.addEventListener('click', e => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').substring(1);
-            const target = document.getElementById(targetId);
-            if (target) {
-                reel.scrollTo({
-                    top: target.offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-            setTimeout(updateMenu, 100);
-        });
-    });
+		reel.scrollTo({
+			top: sections[currentIndex].offsetTop,
+			behavior: 'smooth'
+		});
 
-    // Listen to reel scroll
-    reel.addEventListener('scroll', updateMenu);
+		setTimeout(() => {
+			isAnimating = false;
+		}, ANIMATION_DURATION);
+	};
 
-    // Initialize menu state
-    updateMenu();
+	const goToNext = () => scrollToSection(currentIndex + 1);
+	const goToPrev = () => scrollToSection(currentIndex - 1);
 
+	currentIndex = getClosestSectionIndex();
+	updateMenu();
 
-	// Project Menu visibility
+	// WHEEL / TRACKPAD: treat one swipe as one gesture
+	reel.addEventListener('wheel', (e) => {
+		e.preventDefault();
 
+		if (isAnimating) return;
+		if (Math.abs(e.deltaY) < 2) return;
+
+		// If already triggered during this gesture, ignore momentum events
+		if (wheelGestureLocked) return;
+
+		wheelAccumulator += e.deltaY;
+
+		clearTimeout(wheelUnlockTimer);
+		wheelUnlockTimer = setTimeout(() => {
+			wheelAccumulator = 0;
+			wheelGestureLocked = false;
+		}, WHEEL_GESTURE_TIMEOUT);
+
+		if (Math.abs(wheelAccumulator) < WHEEL_THRESHOLD) return;
+
+		wheelGestureLocked = true;
+
+		if (wheelAccumulator > 0) {
+			goToNext();
+		} else {
+			goToPrev();
+		}
+
+		wheelAccumulator = 0;
+
+		setTimeout(() => {
+			wheelGestureLocked = false;
+		}, ANIMATION_DURATION + 150);
+	}, { passive: false });
+
+	// TOUCH SWIPE
+	reel.addEventListener('touchstart', (e) => {
+		if (!e.touches.length) return;
+		touchStartY = e.touches[0].clientY;
+	}, { passive: true });
+
+	reel.addEventListener('touchend', (e) => {
+		if (isAnimating || !e.changedTouches.length) return;
+
+		touchEndY = e.changedTouches[0].clientY;
+		const deltaY = touchStartY - touchEndY;
+
+		if (Math.abs(deltaY) < SWIPE_THRESHOLD) return;
+
+		if (deltaY > 0) {
+			goToNext();
+		} else {
+			goToPrev();
+		}
+	}, { passive: true });
+
+	// KEYBOARD
+	window.addEventListener('keydown', (e) => {
+		if (isAnimating) return;
+
+		if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+			e.preventDefault();
+			goToNext();
+		}
+
+		if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+			e.preventDefault();
+			goToPrev();
+		}
+	}, { passive: false });
+
+	// MENU LINKS
+	menuLinks.forEach((link, index) => {
+		link.addEventListener('click', (e) => {
+			e.preventDefault();
+			scrollToSection(index);
+		});
+	});
+
+	// Sync active state only when not animating
+	reel.addEventListener('scroll', () => {
+		if (isAnimating) return;
+		currentIndex = getClosestSectionIndex();
+		updateMenu();
+	});
+
+	// Project menu visibility
 	const projectMenu = document.querySelector('.project-menu');
 	const lastSection = sections[sections.length - 1];
 
 	function toggleMenuVisibility() {
-		const reelRect = reel.getBoundingClientRect();
+		if (!projectMenu || !lastSection) return;
+
 		const lastSectionBottom = lastSection.getBoundingClientRect().bottom;
 
-		// Hide menu if bottom of last section is above the top of viewport
 		if (lastSectionBottom <= 0) {
 			projectMenu.style.opacity = '0';
 			projectMenu.style.pointerEvents = 'none';
@@ -152,25 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// Call on reel scroll
 	reel.addEventListener('scroll', toggleMenuVisibility);
-
-	// Optional: call on window scroll too if needed
 	window.addEventListener('scroll', toggleMenuVisibility);
-
-	// Initialize
 	toggleMenuVisibility();
 
-
-	// Animate in project menu items with stagger
 	const projectItems = document.querySelectorAll('.project-menu li');
 	projectItems.forEach((item, i) => {
-	item.style.animationDelay = `${i * 0.1}s`; // 0.1s stagger
+		item.style.animationDelay = `${i * 0.1}s`;
 	});
-
-
 });
-
 
 // "Active" classes for the Gutenburg Cover blocks and "Scrolling" class for the <main> 
 
