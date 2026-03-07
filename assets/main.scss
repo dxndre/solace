@@ -243,254 +243,278 @@ body {
 
 	&.page-template-page-homepage {
 
-	#main {
-		max-width: 100%;
+		#main {
+			max-width: 100%;
 
-		/* =========================================================
-		Film Oscillator Wrapper
-		========================================================= */
+			/* =========================================================
+			Film Oscillator Wrapper
+			========================================================= */
 
-		.film-oscillator-wrap {
-			height: 100vh;
-			overflow: hidden;
-			position: relative;
+			.film-oscillator-wrap {
+				height: 100vh;
+				overflow: hidden;
+				position: relative;
 
-			&::after {
-				content: "";
-				position: absolute;
-				bottom: 0;
-				left: 0;
-				width: 100%;
-				height: 90px;
-				background-image: linear-gradient(
-					180deg,
-					rgba(0, 0, 0, 0),
-					#000000
-				);
-				z-index: 1;
-				pointer-events: none;
-				transition: 0.3s ease;
-			}
-		}
-
-		/* =========================================================
-		Mosaic Section (Gutenberg Group)
-		========================================================= */
-
-		section.mosaic-section {
-			padding: 0;
-			margin: 0;
-
-			/* -----------------------------------------
-				Gutenberg Query → DATA SOURCE ONLY
-			----------------------------------------- */
-
-			.mosaic-columns {
-				display: none; // hidden — JS uses this as source
+				&::after {
+					content: "";
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					width: 100%;
+					height: 90px;
+					background-image: linear-gradient(
+						180deg,
+						rgba(0, 0, 0, 0),
+						#000000
+					);
+					z-index: 1;
+					pointer-events: none;
+					transition: 0.3s ease;
+				}
 			}
 
-			/* -----------------------------------------
-				Oscillating Rows (JS-generated)
-			----------------------------------------- */
+			/* =========================================================
+			Mosaic Section (Gutenberg Group)
+			========================================================= */
 
-			.oscillating-row {
-				display: flex;
-				flex-direction: row;
-				gap: 8px;
-				white-space: nowrap;
-				overflow: visible;
-				pointer-events: none;
+			section.mosaic-section {
+				padding: 0;
+				margin: 0;
 
-				&:hover {
-					animation-play-state: paused;
+				/* -----------------------------------------
+					Gutenberg Query → DATA SOURCE ONLY
+				----------------------------------------- */
+
+				.mosaic-columns {
+					display: none; // hidden — JS uses this as source
 				}
 
-				/* -------------------------------------
-				Individual Post (li.wp-block-post)
-				------------------------------------- */
+				/* -----------------------------------------
+					Oscillating Rows (JS-generated)
+				----------------------------------------- */
 
-				.wp-block-post {
-					flex-shrink: 0;
-					pointer-events: auto;
-					width: 300px;
-					list-style: none;
+				.oscillating-row {
+					display: flex;
+					flex-direction: row;
+					gap: 8px;
+					white-space: nowrap;
+					overflow: visible;
+					pointer-events: none;
 
-					@include media-breakpoint-up(md) {
-						width: 425px;
+					&:hover {
+						animation-play-state: paused;
 					}
 
-					@include media-breakpoint-up(xl) {
-						width: 550px;
-					}
+					/* -------------------------------------
+					Individual Post (li.wp-block-post)
+					------------------------------------- */
 
-					@include media-breakpoint-up(xxl) {
-						width: 650px;
-					}
+					.wp-block-post {
+						flex-shrink: 0;
+						pointer-events: auto;
+						width: 300px;
+						list-style: none;
 
-					/* ---------------------------------
-						Film Tile
-					--------------------------------- */
+						@include media-breakpoint-up(md) {
+							width: 425px;
+						}
 
-					.film-tile {
-						position: relative;
-						padding: 0 !important;
-						margin: 4px 0;
-						cursor: pointer;
-						overflow: hidden;
+						@include media-breakpoint-up(xl) {
+							width: 550px;
+						}
 
-						/* -----------------------------
-						Media (figure → a → img/video)
-						----------------------------- */
+						@include media-breakpoint-up(xxl) {
+							width: 650px;
+						}
 
-						figure {
-							margin: 0;
+						/* ---------------------------------
+							Film Tile
+						--------------------------------- */
 
-							a {
-								display: block;
-								height: 100%;
-								height: 20vh;
+						.film-tile {
+							position: relative;
+							padding: 0 !important;
+							margin: 4px 0;
+							cursor: pointer;
+							overflow: hidden;
 
-								@include media-breakpoint-up(md) {
-									height: 25vh;
+							/* -----------------------------
+							Media (figure → a → img/video)
+							----------------------------- */
+
+							figure {
+								margin: 0;
+
+								a {
+									display: block;
+									height: 100%;
+									height: 20vh;
+
+									@include media-breakpoint-up(md) {
+										height: 25vh;
+									}
+
+									@media screen and (min-width: 2560px) {
+										height: 20vh;
+									}
+
+									img,
+									video {
+										width: 100%;
+										height: 100%;
+										object-fit: cover;
+										display: block;
+										transition: 0.5s ease;
+									}
 								}
 
-								@media screen and (min-width: 2560px) {
-									height: 20vh;
+								.video-preview {
+									width: 100%;
+									height: 100%;
+
+									video {
+										width: 100%;
+										height: 100%;
+										display: block;
+										transition: 1s ease;
+									}
+								}
+							}
+
+							/* -----------------------------
+							Overlay
+							----------------------------- */
+
+							.film-overlay {
+								position: absolute;
+								inset: 0;
+								padding: 20px;
+								display: flex;
+								flex-direction: column;
+								justify-content: center;
+								align-items: center;
+
+								opacity: 0;
+								backdrop-filter: blur(0);
+								transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
+								pointer-events: auto;
+								color: #fff;
+
+								.tile-title,
+								.film-meta {
+									font-family: "JetBrains Mono", monospace;
+									margin-bottom: 12px;
+									text-align: center;
+
+									opacity: 0;
+									transform: translateY(12px);
+									transition: 0.3s ease;
+
+									a {
+										color: white;
+									}
+								}
+
+								.film-meta {
+									font-weight: lighter;
+								}
+
+								.film-logo-img {
+									width: 100%;
+									max-width: 200px;
+									max-height: 100px;
+									margin-bottom: 2em;
+									object-fit: contain;
+
+									@include media-breakpoint-up(md) {
+										max-width: 300px;
+									}
+								}
+							}
+
+							/* -----------------------------
+							Hover States
+							----------------------------- */
+
+							&:hover {
+								.film-overlay {
+									opacity: 1;
+									backdrop-filter: blur(15px);
+
+									.tile-title,
+									.film-meta {
+										opacity: 1;
+										transform: translateY(0);
+									}
 								}
 
 								img,
 								video {
-									width: 100%;
-									height: 100%;
-									object-fit: cover;
-									display: block;
-									transition: 0.5s ease;
+									transform: scale(1.125);
+									filter: saturate(1);
 								}
-							}
-
-							.video-preview {
-								width: 100%;
-								height: 100%;
-
-								video {
-									width: 100%;
-									height: 100%;
-									display: block;
-									transition: 1s ease;
-								}
-							}
-						}
-
-						/* -----------------------------
-						Overlay
-						----------------------------- */
-
-						.film-overlay {
-							position: absolute;
-							inset: 0;
-							padding: 20px;
-							display: flex;
-							flex-direction: column;
-							justify-content: center;
-							align-items: center;
-
-							opacity: 0;
-							backdrop-filter: blur(0);
-							transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
-							pointer-events: auto;
-							color: #fff;
-
-							.tile-title,
-							.film-meta {
-								font-family: "JetBrains Mono", monospace;
-								margin-bottom: 12px;
-								text-align: center;
-
-								opacity: 0;
-								transform: translateY(12px);
-								transition: 0.3s ease;
-
-								a {
-									color: white;
-								}
-							}
-
-							.film-meta {
-								font-weight: lighter;
-							}
-
-							.film-logo-img {
-								width: 100%;
-								max-width: 200px;
-								max-height: 100px;
-								margin-bottom: 2em;
-								object-fit: contain;
-
-								@include media-breakpoint-up(md) {
-									max-width: 300px;
-								}
-							}
-						}
-
-						/* -----------------------------
-						Hover States
-						----------------------------- */
-
-						&:hover {
-							.film-overlay {
-								opacity: 1;
-								backdrop-filter: blur(15px);
-
-								.tile-title,
-								.film-meta {
-									opacity: 1;
-									transform: translateY(0);
-								}
-							}
-
-							img,
-							video {
-								transform: scale(1.125);
-								filter: saturate(1);
 							}
 						}
 					}
 				}
 			}
+
+			/* =========================================================
+			Oscillation Animations
+			========================================================= */
+
+			@keyframes scrollLeft {
+				from { transform: translateX(0); }
+				to   { transform: translateX(-33.333%); }
+			}
+
+			@keyframes scrollRight {
+				from { transform: translateX(-33.333%); }
+				to   { transform: translateX(0); }
+			}
+
+			.scroll-left {
+				animation: scrollLeft 5s linear infinite;
+
+				@include media-breakpoint-up(sm) {
+					animation: scrollLeft 20s linear infinite;
+				}
+
+				@include media-breakpoint-up(md) {
+					animation: scrollLeft 25s linear infinite;
+				}
+
+				@include media-breakpoint-up(lg) {
+					animation: scrollLeft 30s linear infinite;
+				}
+			}
+
+			.scroll-right {
+				animation: scrollRight 5s linear infinite;
+
+				@include media-breakpoint-up(sm) {
+					animation: scrollRight 20s linear infinite;
+				}
+
+				@include media-breakpoint-up(md) {
+					animation: scrollRight 25s linear infinite;
+				}
+
+				@include media-breakpoint-up(lg) {
+					animation: scrollRight 30s linear infinite;
+				}
+			}
 		}
 
 		/* =========================================================
-		Oscillation Animations
+			Footer
 		========================================================= */
 
-		@keyframes scrollLeft {
-			from { transform: translateX(0); }
-			to   { transform: translateX(-33.333%); }
+		#footer {
+			.inner-footer {
+				border-top: none;
+			}
 		}
-
-		@keyframes scrollRight {
-			from { transform: translateX(-33.333%); }
-			to   { transform: translateX(0); }
-		}
-
-		.scroll-left {
-			animation: scrollLeft 30s linear infinite;
-		}
-
-		.scroll-right {
-			animation: scrollRight 30s linear infinite;
-		}
-	}
-
-	/* =========================================================
-		Footer
-	========================================================= */
-
-	#footer {
-		.inner-footer {
-			border-top: none;
-		}
-	}
 	}
 
 	// Keyframes for smooth up/down scrolling
@@ -1898,6 +1922,11 @@ body {
 						border: 1px solid white;
 						transition: 0.15s all ease;
 					}
+				}
+
+				.wpcf7-response-output {
+					padding: 1em 2em;
+					border: 1px solid white !important;
 				}
 			}
 		}
