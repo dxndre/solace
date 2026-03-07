@@ -361,3 +361,148 @@ function solace_digital_password_form() {
     return $form;
 }
 add_filter('the_password_form', 'solace_digital_password_form');
+
+// Add data-film-logo via the query loop
+
+add_filter('render_block', function($block_content, $block) {
+	// Target only the Query Loop Post Template block
+	if (empty($block['blockName']) || $block['blockName'] !== 'core/post-template') {
+		return $block_content;
+	}
+
+	// If no post context, bail
+	if (!in_the_loop()) return $block_content;
+
+	return $block_content;
+}, 10, 2);
+
+// Oscillating Film Shortcode for homepage
+
+function solace_get_acf_image_url( $field_value ) {
+	if ( is_array( $field_value ) && ! empty( $field_value['url'] ) ) {
+		return $field_value['url'];
+	}
+
+	if ( is_numeric( $field_value ) ) {
+		$url = wp_get_attachment_image_url( (int) $field_value, 'full' );
+		return $url ? $url : '';
+	}
+
+	if ( is_string( $field_value ) ) {
+		return $field_value;
+	}
+
+	return '';
+}
+
+function solace_render_film_tile( $post_id ) {
+	$title         = get_the_title( $post_id );
+	$permalink     = get_permalink( $post_id );
+	$director      = get_field( 'director', $post_id );
+	$release_date  = get_field( 'release_date', $post_id );
+	$film_type     = get_field( 'film_type', $post_id );
+	$producer      = get_field( 'producer', $post_id );
+	$video_preview = get_field( 'video_preview', $post_id );
+	$image_preview = get_field( 'image_preview', $post_id );
+	$film_logo     = get_field( 'film_logo', $post_id );
+
+	$director_text = $director ? $director : 'Unknown';
+	$release_year  = $release_date ? date( 'Y', strtotime( $release_date ) ) : 'TBC';
+
+	$video_url = solace_get_acf_image_url( $video_preview );
+	$image_url = '';
+	$logo_url  = solace_get_acf_image_url( $film_logo );
+
+	if ( has_post_thumbnail( $post_id ) ) {
+		$image_url = get_the_post_thumbnail_url( $post_id, 'full' );
+	}
+
+	if ( ! $image_url && $image_preview ) {
+		$image_url = solace_get_acf_image_url( $image_preview );
+	}
+
+	$post_classes = implode(
+		' ',
+		get_post_class(
+			'wp-block-post',
+			$post_id
+		)
+	);
+
+	ob_start();
+	?>
+	<li
+		class="<?php echo esc_attr( $post_classes ); ?>"
+		data-title="<?php echo esc_attr( $title ); ?>"
+		data-director="<?php echo esc_attr( $director_text ); ?>"
+		data-release="<?php echo esc_attr( $release_year ); ?>"
+		data-url="<?php echo esc_url( $permalink ); ?>"
+		<?php if ( $film_type ) : ?>data-film_type="<?php echo esc_attr( $film_type ); ?>"<?php endif; ?>
+		<?php if ( $release_date ) : ?>data-release_date="<?php echo esc_attr( $release_date ); ?>"<?php endif; ?>
+		<?php if ( $producer ) : ?>data-producer="<?php echo esc_attr( $producer ); ?>"<?php endif; ?>
+		<?php if ( $video_url ) : ?>data-video_preview="<?php echo esc_url( $video_url ); ?>"<?php endif; ?>
+		<?php if ( $image_url ) : ?>data-image_preview="<?php echo esc_url( $image_url ); ?>"<?php endif; ?>
+		<?php if ( $logo_url ) : ?>data-film_logo="<?php echo esc_url( $logo_url ); ?>"<?php endif; ?>
+	>
+		<div class="wp-block-group film-tile" style="padding: 30px; cursor: pointer;">
+			<div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+
+				<?php if ( $video_url || $image_url ) : ?>
+					<figure class="wp-block-post-featured-image">
+						<a href="<?php echo esc_url( $permalink ); ?>" target="_self">
+							<?php if ( $video_url ) : ?>
+								<div class="video-preview">
+									<video autoplay muted loop playsinline>
+										<source src="<?php echo esc_url( $video_url ); ?>" type="<?php echo esc_attr( wp_check_filetype( $video_url )['type'] ?: 'video/mp4' ); ?>">
+									</video>
+								</div>
+							<?php elseif ( $image_url ) : ?>
+								<img
+									src="<?php echo esc_url( $image_url ); ?>"
+									alt="<?php echo esc_attr( $title ); ?>"
+									class="attachment-post-thumbnail size-post-thumbnail wp-post-image"
+								>
+							<?php endif; ?>
+						</a>
+					</figure>
+				<?php endif; ?>
+
+				<div class="wp-block-group film-overlay">
+					<div class="wp-block-group__inner-container is-layout-constrained wp-block-group-is-layout-constrained">
+
+						<?php if ( $logo_url ) : ?>
+							<div class="film-logo">
+								<a href="<?php echo esc_url( $permalink ); ?>" target="_self">
+									<img class="film-logo-img" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy">
+								</a>
+							</div>
+						<?php else : ?>
+							<h2 class="tile-title wp-block-post-title">
+								<a href="<?php echo esc_url( $permalink ); ?>" target="_self"><?php echo esc_html( $title ); ?></a>
+							</h2>
+						<?php endif; ?>
+
+						<p class="film-meta">
+							<?php if ( $film_type ) : ?>
+								<strong>Type:</strong> <?php echo esc_html( $film_type ); ?><br>
+							<?php endif; ?>
+
+							<?php if ( $release_date ) : ?>
+								<strong>Release:</strong> <?php echo esc_html( $release_date ); ?><br>
+							<?php endif; ?>
+
+							<strong>Director:</strong> <?php echo esc_html( $director_text ); ?><br>
+
+							<?php if ( $producer ) : ?>
+								<strong>Producer:</strong> <?php echo esc_html( $producer ); ?><br>
+							<?php endif; ?>
+						</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</li>
+	<?php
+	return ob_get_clean();
+}

@@ -716,22 +716,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-// Adding ACF Field values inside the film overlays for the homeoage mosaic
+// Adding ACF Field values inside the film overlays for the homepage mosaic
 
 document.querySelectorAll('.wp-block-post').forEach(tile => {
+
 	const overlay = tile.querySelector('.film-overlay .wp-block-group__inner-container');
 	if (!overlay) return;
 
-	overlay.innerHTML += `
-		<p class="film-meta">
-			${tile.dataset.film_type ? `<strong>Type:</strong> ${tile.dataset.film_type}<br>` : ''}
-			${tile.dataset.release_date ? `<strong>Release:</strong> ${tile.dataset.release_date}<br>` : ''}
-			${tile.dataset.director ? `<strong>Director:</strong> ${tile.dataset.director}<br>` : ''}
-			${tile.dataset.producer ? `<strong>Producer:</strong> ${tile.dataset.producer}<br>` : ''}
-		</p>
-	`;
 
+	// --------------------------------
 	// Store preview media for lightbox
+	// --------------------------------
+
 	if (tile.dataset.video_preview) {
 		overlay.dataset.videoPreview = tile.dataset.video_preview;
 	}
@@ -739,6 +735,7 @@ document.querySelectorAll('.wp-block-post').forEach(tile => {
 	if (tile.dataset.image_preview) {
 		overlay.dataset.imagePreview = tile.dataset.image_preview;
 	}
+
 });
 
 // Endless loop for homepage film oscillator

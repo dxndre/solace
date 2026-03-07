@@ -296,7 +296,7 @@ body {
 			.oscillating-row {
 				display: flex;
 				flex-direction: row;
-				gap: 16px;
+				gap: 8px;
 				white-space: nowrap;
 				overflow: visible;
 				pointer-events: none;
@@ -320,6 +320,10 @@ body {
 					}
 
 					@include media-breakpoint-up(xl) {
+						width: 550px;
+					}
+
+					@include media-breakpoint-up(xxl) {
 						width: 650px;
 					}
 
@@ -413,6 +417,18 @@ body {
 
 							.film-meta {
 								font-weight: lighter;
+							}
+
+							.film-logo-img {
+								width: 100%;
+								max-width: 200px;
+								max-height: 100px;
+								margin-bottom: 2em;
+								object-fit: contain;
+
+								@include media-breakpoint-up(md) {
+									max-width: 300px;
+								}
 							}
 						}
 
@@ -1863,13 +1879,18 @@ body {
 				}
 
 				.wpcf7-submit {
-				background-color: white;
+					background-color: white;
+					color: black;
 					font-weight: bold;
-					width: 200px;
+					width: 100%;
 					padding: 16px;
 					margin-top: 2em;
 					border: 1px solid transparent;
 					transition: 0.3s all ease;
+
+					@include media-breakpoint-up(sm) {
+						max-width: 250px;
+					}
 
 					&:hover {
 						color: white;
