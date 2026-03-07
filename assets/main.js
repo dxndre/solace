@@ -843,3 +843,89 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+// Custom cursor for the site
+
+document.addEventListener('DOMContentLoaded', () => {
+
+	const cursor = document.querySelector('.solace-cursor');
+	if (!cursor) return;
+
+	const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+	if (!isDesktop) return;
+
+	const interactiveSelector = `
+		a,
+		button,
+		input,
+		textarea,
+		select,
+		label,
+		[role="button"],
+		.film-tile,
+		.wp-block-post,
+		.nav-link,
+		.navbar-brand
+	`;
+
+	let visible = false;
+
+	let mouseX = window.innerWidth / 2;
+	let mouseY = window.innerHeight / 2;
+
+	let currentX = mouseX;
+	let currentY = mouseY;
+
+	const speed = 0.14; // 0.1 = floatier, 0.18 = snappier
+
+	const showCursor = () => {
+		if (!visible) {
+			cursor.classList.add('is-visible');
+			visible = true;
+		}
+	};
+
+	const hideCursor = () => {
+		cursor.classList.remove('is-visible');
+		cursor.classList.remove('is-hovering');
+		cursor.classList.remove('is-clicking');
+		visible = false;
+	};
+
+	document.addEventListener('mousemove', (e) => {
+		mouseX = e.clientX;
+		mouseY = e.clientY;
+
+		showCursor();
+
+		const interactive = e.target.closest(interactiveSelector);
+		cursor.classList.toggle('is-hovering', !!interactive);
+	});
+
+	document.addEventListener('mousedown', () => {
+		cursor.classList.remove('is-clicking');
+		void cursor.offsetWidth;
+		cursor.classList.add('is-clicking');
+	});
+
+	document.addEventListener('mouseup', () => {
+		setTimeout(() => {
+			cursor.classList.remove('is-clicking');
+		}, 180);
+	});
+
+	document.addEventListener('mouseleave', hideCursor);
+	window.addEventListener('blur', hideCursor);
+
+	const animateCursor = () => {
+		currentX += (mouseX - currentX) * speed;
+		currentY += (mouseY - currentY) * speed;
+
+		cursor.style.left = `${currentX}px`;
+		cursor.style.top = `${currentY}px`;
+
+		requestAnimationFrame(animateCursor);
+	};
+
+	animateCursor();
+});

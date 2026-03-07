@@ -2091,6 +2091,96 @@ body {
 			}
 		}
 	}
+
+	@media (hover: hover) and (pointer: fine) {
+
+		html,
+		body,
+		a,
+		button,
+		input,
+		textarea,
+		select,
+		label,
+		[role="button"],
+		.film-tile,
+		.wp-block-post,
+		.nav-link,
+		.navbar-brand {
+			cursor: none !important;
+		}
+
+		.solace-cursor {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 42px;
+			height: 42px;
+			transform: translate(-50%, -50%);
+			pointer-events: none;
+			z-index: 999999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			transition:
+				opacity .2s ease,
+				transform .2s ease;
+
+			&.is-visible {
+				opacity: 1;
+			}
+
+			&.is-hovering {
+				.solace-cursor__icon {
+					transform: scale(1.15);
+					filter: drop-shadow(0 0 10px rgba(255,255,255,.3));
+				}
+			}
+
+			&.is-clicking {
+				.solace-cursor__icon {
+					transform: scale(1.35);
+					filter: drop-shadow(0 0 12px rgba(255,43,43,.5));
+
+					line {
+						stroke: #ff2b2b;
+					}
+				}
+			}
+		}
+
+		.solace-cursor__icon {
+			width: 26px;
+			height: 26px;
+			transition:
+				transform .2s ease,
+				filter .2s ease;
+
+			line {
+				stroke: #ffffff;
+				stroke-width: 8;
+				stroke-linecap: round;
+				transition:
+					stroke .2s ease,
+					transform .2s ease;
+				filter: drop-shadow(0 0 6px rgba(255,255,255,.25));
+			}
+		}
+	}
+
+	@keyframes solaceCursorPulse {
+		0% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.35);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
 }
 
 img {
@@ -2211,7 +2301,7 @@ img {
 
 					&:hover {
 						transform: scale(1.05);
-						filter: brightness(10)saturate(0);
+						filter: brightness(5);
 						transition: 0.3s all ease;
 					}
 

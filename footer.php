@@ -79,6 +79,13 @@
 		<span class="lightbox-next">&#10095;</span>
 	</div>
 
+	<div class="solace-cursor" aria-hidden="true">
+		<svg class="solace-cursor__icon" viewBox="0 0 100 100">
+			<line x1="20" y1="20" x2="80" y2="80"></line>
+			<line x1="80" y1="20" x2="20" y2="80"></line>
+		</svg>
+	</div>
+
 	<?php
 		wp_footer();
 	?>
