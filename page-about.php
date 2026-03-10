@@ -20,6 +20,90 @@ get_header();
 	</div>
 </div>
 
+<div class="team-photo-map">
+	<section class="group-photo-section">
+		<img src="<?php echo get_template_directory_uri(); ?>/assets/img/team.jpg" alt="The Solace Films team">
+	</section>
+
+	<button
+		class="team-hotspot"
+		type="button"
+		style="--x: 44%; --y: 33%; --label-x: -170px; --label-y: 44px;"
+		aria-label="Raihan Kamal, Director"
+	>
+		<span class="team-hotspot__dot"></span>
+		<span class="team-hotspot__label">
+			<strong>Raihan Kamal</strong>
+			<em>Director</em>
+		</span>
+	</button>
+
+	<button
+		class="team-hotspot"
+		type="button"
+		style="--x: 74%; --y: 24%; --label-x: -140px; --label-y: 52px;"
+		aria-label="Shavez Khan, Director"
+	>
+		<span class="team-hotspot__dot"></span>
+		<span class="team-hotspot__label">
+			<strong>Shavez Khan</strong>
+			<em>Director</em>
+		</span>
+	</button>
+
+	<button
+		class="team-hotspot"
+		type="button"
+		style="--x: 39%; --y: 21%; --label-x: -140px; --label-y: 52px;"
+		aria-label="Andew Ukiwa, Graphic Artist"
+	>
+		<span class="team-hotspot__dot"></span>
+		<span class="team-hotspot__label">
+			<strong>Andrew Ukiwa</strong>
+			<em>Social Branded Entertainment</em>
+		</span>
+	</button>
+
+	<button
+		class="team-hotspot"
+		type="button"
+		style="--x: 67%; --y: 24%; --label-x: -160px; --label-y: 48px;"
+		aria-label="John Doe, Producer"
+	>
+		<span class="team-hotspot__dot"></span>
+		<span class="team-hotspot__label">
+			<strong>John Doe</strong>
+			<em>Producer</em>
+		</span>
+	</button>
+
+	<button
+		class="team-hotspot"
+		type="button"
+		style="--x: 30%; --y: 33%; --label-x: -160px; --label-y: 48px;"
+		aria-label="John Doe, Producer"
+	>
+		<span class="team-hotspot__dot"></span>
+		<span class="team-hotspot__label">
+			<strong>John Doe</strong>
+			<em>Producer</em>
+		</span>
+	</button>
+
+	<button
+		class="team-hotspot"
+		type="button"
+		style="--x: 56%; --y: 34%; --label-x: -160px; --label-y: 48px;"
+		aria-label="John Doe, Producer"
+	>
+		<span class="team-hotspot__dot"></span>
+		<span class="team-hotspot__label">
+			<strong>John Doe</strong>
+			<em>Producer</em>
+		</span>
+	</button>
+</div>
+
 <?php
 the_post();
 ?>

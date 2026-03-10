@@ -482,21 +482,27 @@ function solace_render_film_tile( $post_id ) {
 							</h2>
 						<?php endif; ?>
 
-						<p class="film-meta">
-							<?php if ( $film_type ) : ?>
-								<strong>Type:</strong> <?php echo esc_html( $film_type ); ?><br>
-							<?php endif; ?>
+						<div class="film-meta">
+                            <div class="release-type">
+                                <?php if ( $film_type ) : ?>
+                                    <?php echo esc_html( $film_type ); ?>
+                                <?php endif; ?>
 
-							<?php if ( $release_date ) : ?>
-								<strong>Release:</strong> <?php echo esc_html( $release_date ); ?><br>
-							<?php endif; ?>
+                                <?php if ( $release_date ) : ?>
+                                    |
+                                    <?php echo esc_html( date( 'Y', strtotime( $release_date ) ) ); ?>
+                                <?php endif; ?>
+                            </div>
 
-							<strong>Director:</strong> <?php echo esc_html( $director_text ); ?><br>
-
-							<?php if ( $producer ) : ?>
-								<strong>Producer:</strong> <?php echo esc_html( $producer ); ?><br>
-							<?php endif; ?>
-						</p>
+                            <div class="director-meta">
+                                <strong>Director:</strong> <?php echo esc_html( $director_text ); ?>
+                            </div>
+                            <div class="producer-meta">
+                                <?php if ( $producer ) : ?>
+                                    <strong>Producer:</strong> <?php echo esc_html( $producer ); ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
 					</div>
 				</div>
 

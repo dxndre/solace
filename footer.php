@@ -72,13 +72,6 @@
 		</footer><!-- /#footer -->
 	</div><!-- /#wrapper -->
 
-	<div id="showreel-lightbox" class="lightbox">
-		<span class="lightbox-close">&times;</span>
-		<img class="lightbox-img" src="" alt="">
-		<span class="lightbox-prev">&#10094;</span>
-		<span class="lightbox-next">&#10095;</span>
-	</div>
-
 	<div class="solace-cursor" aria-hidden="true">
 		<svg class="solace-cursor__icon" viewBox="0 0 100 100">
 			<line x1="20" y1="20" x2="80" y2="80"></line>

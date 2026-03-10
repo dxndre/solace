@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const value = Math.floor(progress * target);
-      el.textContent = value + (hasPlus ? '+' : '');
+      el.textContent = value.toLocaleString() + (hasPlus ? '+' : '');
       if (progress < 1) requestAnimationFrame(update);
     }
 
@@ -975,4 +975,57 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	animateCursor();
+});
+
+// Image shift effect on "About" page
+
+document.addEventListener('DOMContentLoaded', () => {
+	const map = document.querySelector('.team-photo-map');
+	const photo = document.querySelector('.group-photo-section');
+
+	if (!map || !photo) return;
+
+	const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+	if (!isDesktop) return;
+
+	let currentX = 0;
+	let currentY = 0;
+	let targetX = 0;
+	let targetY = 0;
+	let rafId = null;
+
+	const maxShift = 12; // lower = subtler / more premium
+
+	const animate = () => {
+		currentX += (targetX - currentX) * 0.08;
+		currentY += (targetY - currentY) * 0.08;
+
+		photo.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+
+		rafId = requestAnimationFrame(animate);
+	};
+
+	map.addEventListener('mousemove', (e) => {
+		const rect = map.getBoundingClientRect();
+
+		const relX = (e.clientX - rect.left) / rect.width;
+		const relY = (e.clientY - rect.top) / rect.height;
+
+		targetX = (relX - 0.5) * maxShift * -1;
+		targetY = (relY - 0.5) * maxShift * -1;
+
+		if (!rafId) {
+			animate();
+		}
+	});
+
+	map.addEventListener('mouseleave', () => {
+		targetX = 0;
+		targetY = 0;
+	});
+
+	window.addEventListener('blur', () => {
+		targetX = 0;
+		targetY = 0;
+	});
 });

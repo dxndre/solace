@@ -28,7 +28,9 @@ $director      = get_field('director');
             <h1 class="entry-title"><?php the_title(); ?></h1>
 			<div class="little-details">
 				<?php if ( $release_date ) : ?>
-					<span class="release-year"><?php echo esc_html($release_date); ?></span>
+					<span class="release-year">
+						<?php echo esc_html( date( 'Y', strtotime( $release_date ) ) ); ?>
+					</span>
 				<?php endif; ?>
 				<?php if ( $film_type && $release_date ) : ?>
 					<span class="separator">|</span>
